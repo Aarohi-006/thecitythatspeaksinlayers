@@ -114,11 +114,13 @@ a {
 
 /* ===================== PEEL EFFECT ===================== */
 
+/* box that holds one sticker (made by script.js) */
 .slot {
   position: relative;
   display: block;
 }
 
+/* the sticker itself: it bends around its bottom-left corner */
 .peel {
   position: relative;
   display: block;
@@ -127,10 +129,12 @@ a {
   transition: transform 0.25s ease;
 }
 
+/* the front (your drawing) is hidden when it flips over */
 .peel img {
   backface-visibility: hidden;
 }
 
+/* the white back of the sticker, cut in the same shape as the drawing */
 .peel-back {
   position: absolute;
   inset: 0;
@@ -141,6 +145,7 @@ a {
   mask: var(--shape) center / contain no-repeat;
 }
 
+/* the faded mark left on the backing paper after peeling */
 .ghost {
   position: absolute;
   inset: 0;
@@ -151,6 +156,7 @@ a {
   transition: opacity 0.3s;
 }
 
+/* HOVER: the edge starts to lift (a tease) */
 .sticker:hover .peel {
   transform: rotate3d(1, -1, 0, 18deg);
 }
@@ -211,7 +217,7 @@ a {
   margin-top: 48px;
 }
 
-/* small section headings: THE PROJECT, WHERE… */
+/* small section headings: THE PROJECT, WHERE... */
 .page-section h2 {
   margin: 0 0 14px;
   font-size: 18px;
@@ -233,7 +239,7 @@ a {
   font-weight: 500;
 }
 
-/* "What's on the sheet" table: sticker → page */
+/* "What's on the sheet" table: sticker -> page */
 .swap-table p {
   display: grid;
   grid-template-columns: 1fr 40px 1fr;
@@ -246,7 +252,7 @@ a {
   border-top: 2px solid var(--ink);
 }
 
-/* ---------- PHONES ---------- */
+/* ---------- PHONES (inner pages) ---------- */
 @media (max-width: 800px) {
   .back-link {
     margin-left: 20px;
