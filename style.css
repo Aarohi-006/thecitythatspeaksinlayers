@@ -95,93 +95,189 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 1fr);   /* 3 stickers per row */
   gap: 20px;
+  justify-items: center;
 }
 
-.sticker {
-  text-align: center;
+.sticker-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  perspective: 800px;           /* gives the peel 3D depth */
+  gap: 16px;
+  padding: 16px 0;
+  text-align: center;
 }
 
-.sticker img {
-  height: 140px;
-  object-fit: contain;          /* keeps the sticker's shape */
-}
+/* ===================== PEEL EFFECT =====================
+   Based on "Sticker Peel CSS Effect v2" by bsehovac
+   https://codepen.io/bsehovac/pen/gvejKK
+   The original is written in Sass; these are the same
+   rules turned into plain CSS. */
 
-/* ===================== PEEL EFFECT ===================== */
-
-/* box that holds one sticker (made by script.js) */
-.slot {
+/* sticker-base() */
+.sticker {
   position: relative;
-  display: block;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* the sticker itself: it bends around its bottom-left corner */
-.peel {
+.sticker * {
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.sticker .sticker-container {
   position: relative;
-  display: block;
   transform-style: preserve-3d;
-  transform-origin: 15% 90%;
-  transition: transform 0.25s ease;
 }
 
-/* the front (your drawing) is hidden when it flips over */
-.peel img {
-  backface-visibility: hidden;
+.sticker .sticker-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* the white back of the sticker, cut in the same shape as the drawing */
-.peel-back {
+.sticker .sticker-clip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+
+.sticker .sticker-front,
+.sticker .sticker-back {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.sticker .sticker-front {
+  z-index: 1;
+  background-color: #ffffff;              /* white sticker paper */
+  background-position: center;
+  background-size: contain;               /* whole drawing always fits */
+  background-repeat: no-repeat;
+  background-origin: content-box;         /* keeps a white border around it */
+  padding: 14px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.sticker .sticker-back {
+  z-index: 2;
+  background-color: #E8E3D8;              /* the back of the sticker */
+}
+
+/* sticker-transition(500ms, ease-in-out) */
+.sticker .sticker-clip,
+.sticker .sticker-front,
+.sticker .sticker-back {
+  transition: 500ms ease-in-out transform;
+}
+
+/* the layer underneath: revealed when the sticker peels */
+.sticker .under {
   position: absolute;
   inset: 0;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  background: linear-gradient(135deg, #ffffff, #e6e1d6);
-  -webkit-mask: var(--shape) center / contain no-repeat;
-  mask: var(--shape) center / contain no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 24px;
+  border: 1.5px dashed #CFC8B8;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--red);
+  text-align: center;
 }
 
-/* the faded mark left on the backing paper after peeling */
-.ghost {
-  position: absolute;
-  inset: 0;
-  background: #E6E0D2;
-  -webkit-mask: var(--shape) center / contain no-repeat;
-  mask: var(--shape) center / contain no-repeat;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+/* sticker-style(): one drawing per sticker */
+.sticker-1 .sticker-front { background-image: url("images/new_york_apple.png"); }
+.sticker-2 .sticker-front { background-image: url("images/taxi.png"); }
+.sticker-3 .sticker-front { background-image: url("images/subway_train.png"); }
+.sticker-4 .sticker-front { background-image: url("images/building.png"); }
+.sticker-5 .sticker-front { background-image: url("images/pizza.png"); }
+.sticker-6 .sticker-front { background-image: url("images/pretzel.png"); }
 
-/* HOVER: the edge starts to lift (a tease) */
-.sticker:hover .peel {
-  transform: rotate3d(1, -1, 0, 18deg);
-}
+/* sticker-init(): size, corner radius, how far it peels, peel angle, tilt
+   (numbers calculated from the original Sass formulas) */
 
-/* CLICK: the sticker peels all the way off */
-.sticker.peeled .peel {
-  transform: rotate3d(1, -1, 0, 175deg) translate3d(-30px, -80px, 60px);
-  opacity: 0;
-  transition: transform 0.7s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.4s 0.3s;
-}
+.sticker-1 { width: 150px; height: 150px; }
+.sticker-1 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-3deg); }
+.sticker-1 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(45deg); }
+.sticker-1 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
+.sticker-1 .sticker-front, .sticker-1 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-1 .sticker-front { transform: rotate(-45deg) translateX(-7.029px) translateY(-7.029px); }
+.sticker-1 .sticker-back { transform: rotate(225deg) translateX(142.971px) translateY(-142.971px); }
+.sticker-1:hover .sticker-clip, .sticker-1.peeled .sticker-clip { transform: translateX(96.454px); }
+.sticker-1:hover .sticker-front, .sticker-1.peeled .sticker-front { transform: rotate(-45deg) translateX(-68.203px) translateY(-68.203px); }
+.sticker-1:hover .sticker-back, .sticker-1.peeled .sticker-back { transform: rotate(225deg) translateX(81.797px) translateY(-81.797px); }
 
-.sticker.peeled .ghost {
-  opacity: 1;
-}
+.sticker-2 { width: 150px; height: 150px; }
+.sticker-2 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(2deg); }
+.sticker-2 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(60deg); }
+.sticker-2 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(12.223px); }
+.sticker-2 .sticker-front, .sticker-2 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-2 .sticker-front { transform: rotate(-60deg) translateX(-6.112px) translateY(-10.586px); }
+.sticker-2 .sticker-back { transform: rotate(240deg) translateX(99.954px) translateY(-173.126px); }
+.sticker-2:hover .sticker-clip, .sticker-2.peeled .sticker-clip { transform: translateX(96.682px); }
+.sticker-2:hover .sticker-front, .sticker-2.peeled .sticker-front { transform: rotate(-60deg) translateX(-48.341px) translateY(-83.729px); }
+.sticker-2:hover .sticker-back, .sticker-2.peeled .sticker-back { transform: rotate(240deg) translateX(57.725px) translateY(-99.983px); }
+
+.sticker-3 { width: 150px; height: 150px; }
+.sticker-3 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-2deg); }
+.sticker-3 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(120deg); }
+.sticker-3 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(12.223px); }
+.sticker-3 .sticker-front, .sticker-3 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-3 .sticker-front { transform: rotate(-120deg) translateX(6.112px) translateY(-10.586px); }
+.sticker-3 .sticker-back { transform: rotate(300deg) translateX(-99.954px) translateY(-173.126px); }
+.sticker-3:hover .sticker-clip, .sticker-3.peeled .sticker-clip { transform: translateX(96.682px); }
+.sticker-3:hover .sticker-front, .sticker-3.peeled .sticker-front { transform: rotate(-120deg) translateX(48.341px) translateY(-83.729px); }
+.sticker-3:hover .sticker-back, .sticker-3.peeled .sticker-back { transform: rotate(300deg) translateX(-57.725px) translateY(-99.983px); }
+
+.sticker-4 { width: 150px; height: 150px; }
+.sticker-4 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(3deg); }
+.sticker-4 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
+.sticker-4 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
+.sticker-4 .sticker-front, .sticker-4 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-4 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
+.sticker-4 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
+.sticker-4:hover .sticker-clip, .sticker-4.peeled .sticker-clip { transform: translateX(96.454px); }
+.sticker-4:hover .sticker-front, .sticker-4.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
+.sticker-4:hover .sticker-back, .sticker-4.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
+
+.sticker-5 { width: 150px; height: 150px; }
+.sticker-5 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-2deg); }
+.sticker-5 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(-20deg); }
+.sticker-5 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(16.328px); }
+.sticker-5 .sticker-front, .sticker-5 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-5 .sticker-front { transform: rotate(20deg) translateX(-15.343px) translateY(5.584px); }
+.sticker-5 .sticker-back { transform: rotate(160deg) translateX(183.996px) translateY(66.969px); }
+.sticker-5:hover .sticker-clip, .sticker-5.peeled .sticker-clip { transform: translateX(97.092px); }
+.sticker-5:hover .sticker-front, .sticker-5.peeled .sticker-front { transform: rotate(20deg) translateX(-91.237px) translateY(33.207px); }
+.sticker-5:hover .sticker-back, .sticker-5.peeled .sticker-back { transform: rotate(160deg) translateX(108.102px) translateY(39.346px); }
+
+.sticker-6 { width: 150px; height: 150px; }
+.sticker-6 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(2deg); }
+.sticker-6 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(30deg); }
+.sticker-6 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(12.223px); }
+.sticker-6 .sticker-front, .sticker-6 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
+.sticker-6 .sticker-front { transform: rotate(-30deg) translateX(-10.586px) translateY(-6.112px); }
+.sticker-6 .sticker-back { transform: rotate(210deg) translateX(173.126px) translateY(-99.954px); }
+.sticker-6:hover .sticker-clip, .sticker-6.peeled .sticker-clip { transform: translateX(96.682px); }
+.sticker-6:hover .sticker-front, .sticker-6.peeled .sticker-front { transform: rotate(-30deg) translateX(-83.729px) translateY(-48.341px); }
+.sticker-6:hover .sticker-back, .sticker-6.peeled .sticker-back { transform: rotate(210deg) translateX(99.983px) translateY(-57.725px); }
 
 /* ---------- PHONES ---------- */
 @media (max-width: 800px) {
   .home {
-    padding: 0 20px 40px;
+    padding: 0 12px 40px;
   }
   .site-header h1 {
     font-size: 30px;
   }
-  .sticker img {
-    height: 100px;
+  .sticker-grid {
+    grid-template-columns: repeat(2, 1fr);   /* 2 stickers per row */
   }
 }
 
@@ -268,7 +364,7 @@ a {
   }
 }
 
-/* ===================== ARTIST VOICES PAGE ===================== */
+/* ===================== ARTIST VOICE PAGE ===================== */
 
 /* one artist: picture on the left, text on the right */
 .artist {
