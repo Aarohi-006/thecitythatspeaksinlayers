@@ -178,3 +178,89 @@ a {
     height: 100px;
   }
 }
+
+/* ===================== INNER PAGES ===================== */
+
+/* "back to the sheet" link, top left */
+.back-link {
+  display: inline-block;
+  margin: 24px 0 0 40px;
+}
+
+.back-link:hover {
+  color: var(--red);
+}
+
+/* centered column for the page */
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 40px 80px;
+}
+
+.page-header h1 {
+  margin: 8px 0 0;
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 0.95;
+}
+
+.page-section {
+  margin-top: 48px;
+}
+
+.page-section h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.page-section p {
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* the big opening sentence */
+.lead {
+  font-size: 24px !important;
+  line-height: 1.4 !important;
+  font-weight: 500;
+}
+
+.book-photo {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 10px;
+  transform: rotate(-3deg);
+}
+
+/* book → website table */
+.swap-table p {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--ink);
+  font-weight: 700;
+}
+
+.swap-table p:first-child {
+  border-top: 2px solid var(--ink);
+}
+
+.credits {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+}
+
+/* phones */
+@media (max-width: 800px) {
+  .back-link { margin-left: 20px; }
+  .page { padding: 20px 20px 60px; }
+  .page-header h1 { font-size: 44px; }
+  .lead { font-size: 20px !important; }
+}
