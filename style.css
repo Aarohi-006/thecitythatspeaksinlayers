@@ -70,15 +70,10 @@ a {
 
 /* ---------- LAYOUT: sheet on the left, wall on the right ---------- */
 .home {
-  max-width: 1100px;
-  margin: 0 auto;
+  max-width: 700px;          /* how wide the sheet can get */
+  margin: 0 auto;            /* centers it */
   padding: 0 40px 60px;
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;   /* sheet a bit wider than the wall */
-  gap: 28px;
-  align-items: start;
 }
-
 /* ---------- STICKER SHEET ---------- */
 .sheet {
   background: var(--sheet);
