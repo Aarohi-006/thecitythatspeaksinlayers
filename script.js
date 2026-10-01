@@ -1,49 +1,44 @@
-/* ===================== PEEL EFFECT ===================== */
+/* Based on the script from "Sticker Peel CSS Effect v2" by bsehovac
+   https://codepen.io/bsehovac/pen/gvejKK
+   Added: each sticker opens its page after it peels. */
 
-// find every sticker on the page
-const stickers = document.querySelectorAll('.sticker');
+const stickers = document.querySelector('#stickers');
+const cells = stickers.querySelectorAll('.sticker-cell');
 
-stickers.forEach(function (sticker) {
-  const img = sticker.querySelector('img');
+if ('ontouchstart' in window) {
 
-  // 1. build the layers around the image:
-  //    slot  > ghost (mark left behind)
-  //          > peel  > img (front) + peel-back (white back)
-  const slot = document.createElement('span');
-  slot.className = 'slot';
+  // PHONES: first tap peels the sticker, second tap opens the page
+  stickers.classList.add('touch');
 
-  const ghost = document.createElement('span');
-  ghost.className = 'ghost';
+  for (let i = 0; i < cells.length; i++) {
+    cells[i].onclick = function (event) {
+      const sticker = this.querySelector('.sticker');
 
-  const peel = document.createElement('span');
-  peel.className = 'peel';
+      if (!sticker.classList.contains('peeled')) {
+        event.preventDefault();                 // don't open the page yet
+        for (let j = 0; j < cells.length; j++) {
+          cells[j].querySelector('.sticker').classList.remove('peeled');
+        }
+        sticker.classList.add('peeled');
+      }
+      // if it is already peeled, the link opens normally
+    };
+  }
 
-  const back = document.createElement('span');
-  back.className = 'peel-back';
+} else {
 
-  // the back and the ghost use the sticker's own shape
-  slot.style.setProperty('--shape', 'url("' + img.getAttribute('src') + '")');
+  // COMPUTERS: hovering peels the sticker (CSS), clicking opens the page
+  stickers.classList.add('hover');
 
-  img.replaceWith(slot);
-  peel.append(img, back);
-  slot.append(ghost, peel);
+  for (let i = 0; i < cells.length; i++) {
+    cells[i].onclick = function (event) {
+      event.preventDefault();
+      const link = this.href;
+      this.querySelector('.sticker').classList.add('peeled');
+      setTimeout(function () {
+        window.location.href = link;            // open the page after a short pause
+      }, 350);
+    };
+  }
 
-  // 2. on click: peel the sticker, then open its page
-  sticker.addEventListener('click', function (event) {
-    event.preventDefault();               // don't jump to the page yet
-
-    if (sticker.classList.contains('peeled')) return;
-    sticker.classList.add('peeled');      // starts the CSS peel animation
-
-    setTimeout(function () {
-      window.location.href = sticker.href; // go to the page after the peel
-    }, 700);                               // 700ms = length of the animation
-  });
-});
-
-// 3. if someone comes back with the Back button, put the stickers back down
-window.addEventListener('pageshow', function () {
-  stickers.forEach(function (sticker) {
-    sticker.classList.remove('peeled');
-  });
-});
+}
