@@ -267,3 +267,54 @@ a {
     font-size: 20px;
   }
 }
+
+/* ===================== ARTIST VOICE PAGE ===================== */
+
+/* one artist: picture on the left, text on the right */
+.artist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 2px solid var(--ink);
+}
+
+/* picture space: shows a grey box until the image is added */
+.artist-photo {
+  margin: 0;
+}
+
+.artist-photo img {
+  width: 100%;
+  aspect-ratio: 4 / 5;             /* portrait-shaped box */
+  object-fit: cover;               /* photo fills the box without stretching */
+  background: #E1DCCF;             /* grey placeholder when there's no image yet */
+  border-radius: 14px;
+  margin-bottom: 8px;
+}
+
+.artist-text h2 {
+  margin: 6px 0 14px;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.artist-text p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.artist-text .small-label {
+  font-size: 12px;                 /* keep "ARTIST 01" small */
+}
+
+/* phones: picture on top, text underneath */
+@media (max-width: 800px) {
+  .artist {
+    grid-template-columns: 1fr;
+  }
+}
