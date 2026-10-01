@@ -179,7 +179,7 @@ a {
   }
 }
 
-/* ===================== INNER PAGES ===================== */
+/* ===================== INNER PAGES (About, Stories, etc.) ===================== */
 
 /* "back to the sheet" link, top left */
 .back-link {
@@ -198,6 +198,7 @@ a {
   padding: 20px 40px 80px;
 }
 
+/* page title */
 .page-header h1 {
   margin: 8px 0 0;
   font-size: 64px;
@@ -205,10 +206,12 @@ a {
   line-height: 0.95;
 }
 
+/* space between sections */
 .page-section {
   margin-top: 48px;
 }
 
+/* small section headings: THE PROJECT, WHERE… */
 .page-section h2 {
   margin: 0 0 14px;
   font-size: 18px;
@@ -216,27 +219,21 @@ a {
   letter-spacing: 0.04em;
 }
 
+/* normal paragraphs */
 .page-section p {
+  margin: 0;
   font-size: 17px;
   line-height: 1.55;
-  margin: 0;
 }
 
 /* the big opening sentence */
-.lead {
-  font-size: 24px !important;
-  line-height: 1.4 !important;
+.page-section .lead {
+  font-size: 24px;
+  line-height: 1.4;
   font-weight: 500;
 }
 
-.book-photo {
-  width: 100%;
-  max-width: 420px;
-  margin-bottom: 10px;
-  transform: rotate(-3deg);
-}
-
-/* book → website table */
+/* "What's on the sheet" table: sticker → page */
 .swap-table p {
   display: grid;
   grid-template-columns: 1fr 40px 1fr;
@@ -249,18 +246,18 @@ a {
   border-top: 2px solid var(--ink);
 }
 
-.credits {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 20px;
-  border-top: 2px solid var(--ink);
-}
-
-/* phones */
+/* ---------- PHONES ---------- */
 @media (max-width: 800px) {
-  .back-link { margin-left: 20px; }
-  .page { padding: 20px 20px 60px; }
-  .page-header h1 { font-size: 44px; }
-  .lead { font-size: 20px !important; }
+  .back-link {
+    margin-left: 20px;
+  }
+  .page {
+    padding: 20px 20px 60px;
+  }
+  .page-header h1 {
+    font-size: 44px;
+  }
+  .page-section .lead {
+    font-size: 20px;
+  }
 }
