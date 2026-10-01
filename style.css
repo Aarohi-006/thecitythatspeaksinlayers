@@ -42,12 +42,14 @@ a {
 
 /* ---------- HEADER ---------- */
 .site-header {
-  max-width: 1100px;
+  max-width: 760px;
   margin: 0 auto;           /* centers it */
-  padding: 32px 40px 16px;
+  padding: 40px 40px 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;   /* title on top, label underneath */
+  align-items: center;
+  gap: 12px;
+  text-align: center;
 }
 
 .site-header h1 {
@@ -68,12 +70,13 @@ a {
   color: var(--grey);
 }
 
-/* ---------- LAYOUT: sheet on the left, wall on the right ---------- */
+/* ---------- LAYOUT: the sheet, centered ---------- */
 .home {
-  max-width: 700px;          /* how wide the sheet can get */
-  margin: 0 auto;            /* centers it */
+  max-width: 760px;         /* how wide the sheet can get */
+  margin: 0 auto;           /* centers it */
   padding: 0 40px 60px;
 }
+
 /* ---------- STICKER SHEET ---------- */
 .sheet {
   background: var(--sheet);
@@ -95,12 +98,13 @@ a {
 }
 
 .sticker {
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   padding: 12px;
-  transition: transform 0.2s;   /* makes the hover smooth */
+  perspective: 800px;           /* gives the peel 3D depth */
 }
 
 .sticker img {
@@ -108,40 +112,69 @@ a {
   object-fit: contain;          /* keeps the sticker's shape */
 }
 
-/* hover: sticker lifts slightly, like it's coming off */
-.sticker:hover {
-  transform: translateY(-6px) rotate(-3deg);
+/* ===================== PEEL EFFECT ===================== */
+
+.slot {
+  position: relative;
+  display: block;
 }
 
-/* ---------- WALL ---------- */
-.wall {
-  position: relative;           /* lets the label sit on top */
-  border-radius: 18px;
-  overflow: hidden;             /* rounds the photo corners */
-  min-height: 420px;
-  background: #2B2723;
+.peel {
+  position: relative;
+  display: block;
+  transform-style: preserve-3d;
+  transform-origin: 15% 90%;
+  transition: transform 0.25s ease;
 }
 
-.wall img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;            /* fills the box without stretching */
-  opacity: 0.5;
+.peel img {
+  backface-visibility: hidden;
 }
 
-.wall-label {
+.peel-back {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  color: var(--paper);
+  inset: 0;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  background: linear-gradient(135deg, #ffffff, #e6e1d6);
+  -webkit-mask: var(--shape) center / contain no-repeat;
+  mask: var(--shape) center / contain no-repeat;
 }
 
-/* ---------- PHONES: stack sheet above wall ---------- */
+.ghost {
+  position: absolute;
+  inset: 0;
+  background: #E6E0D2;
+  -webkit-mask: var(--shape) center / contain no-repeat;
+  mask: var(--shape) center / contain no-repeat;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sticker:hover .peel {
+  transform: rotate3d(1, -1, 0, 18deg);
+}
+
+/* CLICK: the sticker peels all the way off */
+.sticker.peeled .peel {
+  transform: rotate3d(1, -1, 0, 175deg) translate3d(-30px, -80px, 60px);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.4s 0.3s;
+}
+
+.sticker.peeled .ghost {
+  opacity: 1;
+}
+
+/* ---------- PHONES ---------- */
 @media (max-width: 800px) {
   .home {
-    grid-template-columns: 1fr;
+    padding: 0 20px 40px;
   }
   .site-header h1 {
     font-size: 30px;
+  }
+  .sticker img {
+    height: 100px;
   }
 }
