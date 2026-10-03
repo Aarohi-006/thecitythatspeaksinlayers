@@ -73,8 +73,15 @@ a {
 /* ---------- LAYOUT: the sheet, centered ---------- */
 .home {
   max-width: 760px;         /* how wide the sheet can get */
-  margin: 0 auto;           /* centers it */
-  padding: 0 40px 60px;
+  min-height: 100vh;        /* full screen height */
+  margin: 0 auto;           /* centers it left-right */
+  padding: 40px;
+  display: flex;
+  align-items: center;      /* centers the sheet top-bottom */
+}
+
+.sheet {
+  width: 100%;
 }
 
 /* ---------- STICKER SHEET ---------- */
@@ -271,7 +278,7 @@ a {
 /* ---------- PHONES ---------- */
 @media (max-width: 800px) {
   .home {
-    padding: 0 12px 40px;
+    padding: 24px 12px 24px 30px;   /* extra left space for the spine */
   }
   .site-header h1 {
     font-size: 30px;
