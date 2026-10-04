@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neighborhoods · The City That Speaks in Layers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <div class="spine"></div>
+
+  <main class="page page-wide">
+
+    <!-- TITLE -->
+    <header class="page-header">
+      <p class="small-label">STICKER 02 · TAXI</p>
+      <h1 class="red">NEIGHBORHOODS</h1>
+    </header>
+
+    <section class="hood-layout">
+
+      <!-- MAP: your illustration goes in images/map.png
+           each pin is placed with left (across) and top (down) in % -->
+      <div class="map">
+        <img class="map-art" src="images/map.svg" alt="Map of Lower Manhattan and Williamsburg">
+
+        <button class="pin" data-hood="tribeca"      style="left: 25%; top: 80%;">1</button>
+        <button class="pin" data-hood="soho"         style="left: 33%; top: 66%;">2</button>
+        <button class="pin" data-hood="w4th"         style="left: 28%; top: 50%;">3</button>
+        <button class="pin" data-hood="stmarks"      style="left: 50%; top: 46%;">4</button>
+        <button class="pin" data-hood="williamsburg" style="left: 83%; top: 52%;">5</button>
+      </div>
+
+      <!-- CARDS: only one shows at a time (the one you click on the map) -->
+      <div class="hood-cards">
+
+        <!-- shown before anything is clicked -->
+        <article class="hood show" id="start">
+          <p class="small-label">TAP A STICKER ON THE MAP</p>
+        </article>
+
+        <article class="hood" id="tribeca">
+          <img src="images/tribeca.jpg" alt="Stickers on a pole in Tribeca">
+          <p class="small-label">01 · LOWER MANHATTAN</p>
+          <h2>TRIBECA</h2>
+          <p>Quieter and cleaner: fewer stickers, so each one stands out more.</p>
+          <p class="tags"><span>rare</span><span>clean</span><span>single</span></p>
+        </article>
+
+        <article class="hood" id="soho">
+          <img src="images/soho.jpg" alt="Stickers on a pole in SoHo">
+          <p class="small-label">02 · LOWER MANHATTAN</p>
+          <h2>SOHO</h2>
+          <p>Where street art meets shopping. Artist stickers sit next to brand ads on the same lamppost.</p>
+          <p class="tags"><span>artist</span><span>brand</span><span>shop</span></p>
+        </article>
+
+        <article class="hood" id="w4th">
+          <img src="images/w4th.jpg" alt="Stickers on a pole on W 4th Street">
+          <p class="small-label">03 · WEST VILLAGE</p>
+          <h2>W 4TH STREET</h2>
+          <p>Around Washington Square Park and the basketball courts, student flyers and small art stickers fill every pole.</p>
+          <p class="tags"><span>student</span><span>art</span><span>handmade</span></p>
+        </article>
+
+        <article class="hood" id="stmarks">
+          <img src="images/stmarks.jpg" alt="Stickers on a pole on St. Marks Place">
+          <p class="small-label">04 · EAST VILLAGE</p>
+          <h2>ST. MARKS PLACE</h2>
+          <p>The loudest poles in the city: punk, band and skate stickers layered so thick the metal disappears.</p>
+          <p class="tags"><span>punk</span><span>band</span><span>skate</span></p>
+        </article>
+
+        <article class="hood" id="williamsburg">
+          <img src="images/williamsburg.jpg" alt="Stickers on a pole in Williamsburg">
+          <p class="small-label">05 · BROOKLYN</p>
+          <h2>WILLIAMSBURG</h2>
+          <p>Artists' neighborhood. Stickers, slaps and murals on almost every corner around Bedford Avenue.</p>
+          <p class="tags"><span>artist</span><span>mural</span><span>slaps</span></p>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- back to the sticker sheet -->
+  <a class="back-link small-label" href="index.html">← BACK TO THE SHEET</a>
+
+  <script src="neighborhoods.js"></script>
+</body>
+</html>
