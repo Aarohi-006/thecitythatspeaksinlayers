@@ -114,191 +114,93 @@ a {
   text-align: center;
 }
 
-/* ===================== PEEL EFFECT =====================
-   Based on "Sticker Peel CSS Effect v2" by bsehovac
-   https://codepen.io/bsehovac/pen/gvejKK
-   The original is written in Sass; these are the same
-   rules turned into plain CSS. */
+/* ===================== STICKERS (peel.js) =====================
+   Peel effect: peel.js by Andrew Plummer (MIT license)
+   https://github.com/andrewplummer/peel-js */
 
-/* sticker-base() */
-.sticker {
-  position: relative;
+.sticker-cell {
+  height: 170px;                   /* every cell the same height */
+  justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  animation: slap 450ms cubic-bezier(.2, 1.4, .4, 1) both;
 }
 
-.sticker * {
-  backface-visibility: hidden;
-  pointer-events: none;
+/* sticker drops onto the sheet with a little bounce */
+@keyframes slap {
+  0%   { opacity: 0; transform: scale(1.5) rotate(-8deg); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
 }
 
-.sticker .sticker-container {
+/* the spot on the sheet where a sticker sits */
+.slot {
   position: relative;
-  transform-style: preserve-3d;
 }
 
-.sticker .sticker-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.sticker .sticker-clip {
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-}
-
-.sticker .sticker-front,
-.sticker .sticker-back {
-  position: absolute;
-  overflow: hidden;
-  pointer-events: all;
-}
-
-.sticker .sticker-front {
-  z-index: 1;
-  background-position: center;
-  background-size: contain;               /* whole drawing always fits */
-  background-repeat: no-repeat;
-  background-origin: content-box;
-  padding: 14px;
-  box-sizing: border-box;
-}
-
-/* the back of the sticker */
-.sticker .sticker-back {
+.sticker-cell .peel {
+  position: relative;
   z-index: 2;
+  cursor: grab;
 }
 
-/* the back's paper, cut to the same shape as the drawing
-   (flipped, like the real back of a sticker) */
-.sticker .sticker-back::before {
-  content: "";
-  position: absolute;
-  inset: 14px;
-  background-color: #E8E3D8;
-  transform: scaleY(-1);
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-/* sticker-transition(500ms, ease-in-out) */
-.sticker .sticker-clip,
-.sticker .sticker-front,
-.sticker .sticker-back {
-  transition: 500ms ease-in-out transform;
-}
-
-/* the layer underneath: revealed when the sticker peels */
-.sticker .under {
+/* sticky ghost mark: the glue left on the sheet, same shape as the sticker */
+.ghost {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+  z-index: 0;
+  background-color: rgba(26, 26, 26, 0.06);
+  background-image: radial-gradient(rgba(26, 26, 26, 0.12) 1px, transparent 1.4px);
+  background-size: 6px 6px;      /* little dots, like dried glue */
+}
+
+/* thrown: the sticker flies off spinning */
+.sticker-cell .peel.tumbling {
+  transform: translate(var(--tx), var(--ty)) rotate(var(--spin));
+  opacity: 0;
+  transition: transform 550ms cubic-bezier(.3, .1, .6, 1), opacity 550ms ease-in;
+}
+
+/* demo: the sticker pops back on */
+.sticker-cell .peel.pop {
+  animation: slap 450ms cubic-bezier(.2, 1.4, .4, 1) both;
+}
+
+.sticker-cell .peel:active {
+  cursor: grabbing;
+}
+
+/* front: the drawing */
+.sticker-cell .peel-top {
+  background-color: transparent;
+  background-size: 100% 100%;
+}
+
+/* back of the sticker paper */
+.sticker-cell .peel-back {
+  background-color: #EFEAE0;
+}
+
+/* what's under the sticker: see-through, so the page name shows */
+.sticker-cell .peel-bottom {
+  background-color: transparent;
+}
+
+/* the page name hidden under each sticker */
+.sticker-cell .under {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  white-space: nowrap;
   font-family: "Courier New", monospace;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--red);
-  text-align: center;
-  opacity: 0;                      /* hidden until you peel */
-  transition: opacity 400ms ease-in-out;
+  opacity: 0;                      /* JavaScript fades it in as you peel */
+  pointer-events: none;
 }
-
-.sticker:hover .under,
-.sticker.peeled .under {
-  opacity: 1;
-}
-
-/* sticker-style(): one drawing per sticker */
-.sticker-1 .sticker-front { background-image: url("images/new_york_apple.png"); }
-.sticker-1 .sticker-back::before { -webkit-mask-image: url("images/new_york_apple.png"); mask-image: url("images/new_york_apple.png"); }
-.sticker-2 .sticker-front { background-image: url("images/taxi.png"); }
-.sticker-2 .sticker-back::before { -webkit-mask-image: url("images/taxi.png"); mask-image: url("images/taxi.png"); }
-.sticker-3 .sticker-front { background-image: url("images/subway_train.png"); }
-.sticker-3 .sticker-back::before { -webkit-mask-image: url("images/subway_train.png"); mask-image: url("images/subway_train.png"); }
-.sticker-4 .sticker-front { background-image: url("images/building.png"); }
-.sticker-4 .sticker-back::before { -webkit-mask-image: url("images/building.png"); mask-image: url("images/building.png"); }
-.sticker-5 .sticker-front { background-image: url("images/pizza.png"); }
-.sticker-5 .sticker-back::before { -webkit-mask-image: url("images/pizza.png"); mask-image: url("images/pizza.png"); }
-.sticker-6 .sticker-front { background-image: url("images/pretzel.png"); }
-.sticker-6 .sticker-back::before { -webkit-mask-image: url("images/pretzel.png"); mask-image: url("images/pretzel.png"); }
-
-/* sticker-init(): size, corner radius, how far it peels, peel angle, tilt
-   (numbers calculated from the original Sass formulas) */
-
-.sticker-1 { width: 150px; height: 150px; }
-.sticker-1 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-3deg); }
-.sticker-1 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-1 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-1 .sticker-front, .sticker-1 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-1 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-1 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-1:hover .sticker-clip, .sticker-1.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-1:hover .sticker-front, .sticker-1.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-1:hover .sticker-back, .sticker-1.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
-
-.sticker-2 { width: 150px; height: 150px; }
-.sticker-2 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(2deg); }
-.sticker-2 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-2 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-2 .sticker-front, .sticker-2 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-2 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-2 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-2:hover .sticker-clip, .sticker-2.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-2:hover .sticker-front, .sticker-2.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-2:hover .sticker-back, .sticker-2.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
-
-.sticker-3 { width: 150px; height: 150px; }
-.sticker-3 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-2deg); }
-.sticker-3 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-3 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-3 .sticker-front, .sticker-3 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-3 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-3 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-3:hover .sticker-clip, .sticker-3.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-3:hover .sticker-front, .sticker-3.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-3:hover .sticker-back, .sticker-3.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
-
-.sticker-4 { width: 150px; height: 150px; }
-.sticker-4 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(3deg); }
-.sticker-4 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-4 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-4 .sticker-front, .sticker-4 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-4 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-4 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-4:hover .sticker-clip, .sticker-4.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-4:hover .sticker-front, .sticker-4.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-4:hover .sticker-back, .sticker-4.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
-
-.sticker-5 { width: 150px; height: 150px; }
-.sticker-5 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(-2deg); }
-.sticker-5 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-5 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-5 .sticker-front, .sticker-5 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-5 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-5 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-5:hover .sticker-clip, .sticker-5.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-5:hover .sticker-front, .sticker-5.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-5:hover .sticker-back, .sticker-5.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
-
-.sticker-6 { width: 150px; height: 150px; }
-.sticker-6 .sticker-container { width: 212.132px; height: 212.132px; top: -31.066px; left: -31.066px; transform: rotate(2deg); }
-.sticker-6 .sticker-wrapper { width: 212.132px; height: 212.132px; transform: rotate(135deg); }
-.sticker-6 .sticker-clip { width: 212.132px; height: 212.132px; transform: translateX(9.941px); }
-.sticker-6 .sticker-front, .sticker-6 .sticker-back { left: 31.066px; top: 31.066px; width: 150px; height: 150px; border-radius: 24px; }
-.sticker-6 .sticker-front { transform: rotate(-135deg) translateX(7.029px) translateY(-7.029px); }
-.sticker-6 .sticker-back { transform: rotate(315deg) translateX(-142.971px) translateY(-142.971px); }
-.sticker-6:hover .sticker-clip, .sticker-6.peeled .sticker-clip { transform: translateX(96.454px); }
-.sticker-6:hover .sticker-front, .sticker-6.peeled .sticker-front { transform: rotate(-135deg) translateX(68.203px) translateY(-68.203px); }
-.sticker-6:hover .sticker-back, .sticker-6.peeled .sticker-back { transform: rotate(315deg) translateX(-81.797px) translateY(-81.797px); }
 
 /* ---------- PHONES ---------- */
 @media (max-width: 800px) {
@@ -388,10 +290,10 @@ a {
 /* ---------- PHONES (inner pages) ---------- */
 @media (max-width: 800px) {
   .page {
-    padding: 20px 20px 60px;
+    padding: 20px 20px 60px 34px;   /* extra left space for the spine */
   }
   .page-header h1 {
-    font-size: 44px;
+    font-size: 9vw;                  /* shrinks with the screen so long titles fit */
   }
   .page-section .lead {
     font-size: 20px;
@@ -446,5 +348,374 @@ a {
 @media (max-width: 800px) {
   .artist {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ===================== NEIGHBORHOODS PAGE ===================== */
+
+/* this page is wider than the others, to fit the map */
+.page-wide {
+  max-width: 1040px;
+}
+
+/* map on the left, card on the right */
+.hood-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 40px;
+}
+
+/* the map: pins are placed on top of it */
+.map {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.map-art {
+  width: 100%;
+}
+
+/* a pin = a small round sticker */
+.pin {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;         /* so left/top point to the pin's center */
+  border: 4px solid #ffffff;       /* white sticker edge */
+  border-radius: 50%;
+  background: var(--green);
+  color: #ffffff;
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  transform: rotate(-6deg);
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+/* hover: the sticker lifts up a little */
+.pin:hover {
+  transform: rotate(4deg) translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* the pin you clicked */
+.pin.active {
+  background: var(--red);
+  transform: scale(1.15);
+}
+
+/* cards: all hidden, except the one with class "show" */
+.hood {
+  display: none;
+}
+
+.hood.show {
+  display: block;
+  animation: hood-in 300ms ease;
+}
+
+@keyframes hood-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* photo: grey box until you add the image */
+.hood img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #E1DCCF;
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+
+.hood h2 {
+  margin: 6px 0 10px;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.hood p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.hood .small-label {
+  font-size: 12px;
+}
+
+/* little tags under the sentence */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px !important;
+}
+
+.tags span {
+  padding: 4px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+}
+
+/* phones: map on top, card underneath */
+@media (max-width: 800px) {
+  .hood-layout {
+    grid-template-columns: 1fr;
+  }
+  .pin {
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    font-size: 13px;
+  }
+}
+
+/* ===================== STORIES PAGE ===================== */
+
+/* the pole: every story sits in the same spot, stacked */
+.pole {
+  position: relative;
+  width: 320px;
+  height: 420px;
+  margin: 48px auto 0;
+}
+
+.story {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 420px;
+  cursor: grab;
+}
+
+.story:active {
+  cursor: grabbing;
+}
+
+/* each layer is a little off, like stickers stuck by different people */
+.story:nth-of-type(1) { top: 10px;  left: -8px; }
+.story:nth-of-type(2) { top: -6px;  left: 10px; }
+.story:nth-of-type(3) { top: 6px;   left: 4px;  }
+.story:nth-of-type(4) { top: 0;     left: 0;    }
+
+/* a story that has been peeled off */
+.story.gone {
+  display: none;
+}
+
+/* the front of each story */
+.story .peel-top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  box-sizing: border-box;
+}
+
+.story .peel-top img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.12);   /* placeholder until the photo is added */
+  border-radius: 6px;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.story h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+/* back of the sticker paper */
+.story .peel-back {
+  background-color: #F6F3EC;
+}
+
+/* a story lying flat: its back is hidden */
+.story.flat .peel-back-outer-clip {
+  visibility: hidden;
+}
+
+/* see-through underneath, so the next layer shows */
+.story .peel-bottom {
+  background-color: transparent;
+}
+
+/* paper colors for the layers */
+.layer-red   { background-color: var(--red);   color: #ffffff; }
+.layer-green { background-color: var(--green); color: #ffffff; }
+.layer-ink   { background-color: var(--ink);   color: #ffffff; }
+.layer-cream { background-color: #FBF9F4;      color: var(--ink); }
+
+.layer-red .small-label,
+.layer-green .small-label,
+.layer-ink .small-label {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* the bare pole, under all the layers */
+.bare {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 30px;
+  border: 2px dashed #CFC8B8;
+  text-align: center;
+}
+
+.bare-text {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.restick {
+  padding: 10px 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.restick:hover {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.pole-hint {
+  margin: 28px 0 0;
+  text-align: center;
+}
+
+/* phones: a little smaller */
+@media (max-width: 800px) {
+  .pole,
+  .story {
+    width: 280px;
+    height: 380px;
+  }
+  .story .peel-top img {
+    height: 170px;
+  }
+  .story h2 {
+    font-size: 21px;
+  }
+}
+
+/* ===================== MINI STICKER SHEET (menu) ===================== */
+
+.mini-sheet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  width: fit-content;
+  max-width: calc(100% - 48px);
+  margin: 0 auto 56px;
+  padding: 18px 26px 30px;
+  background: var(--sheet);
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+}
+
+.mini {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  transform: rotate(var(--tilt));
+  transition: transform 200ms ease;
+}
+
+.mini img {
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
+  transition: filter 200ms ease;
+}
+
+/* hover: the sticker lifts */
+.mini:hover {
+  transform: rotate(0deg) translateY(-6px) scale(1.12);
+}
+
+.mini:hover img {
+  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.22));
+}
+
+/* the page name shows under the sticker on hover */
+.mini::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 6px);
+  white-space: nowrap;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--red);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.mini:hover::after,
+.mini:focus-visible::after {
+  opacity: 1;
+}
+
+/* clicked: it peels up and flies away */
+.mini.mini-off {
+  transform: translate(10px, -40px) rotate(25deg) scale(0.9);
+  opacity: 0;
+  transition: transform 380ms ease-in, opacity 380ms ease-in;
+}
+
+/* "you are here": the empty glue mark */
+.mini-ghost {
+  display: block;
+  background-color: rgba(26, 26, 26, 0.08);
+  background-image: radial-gradient(rgba(26, 26, 26, 0.16) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+.mini-here:hover {
+  transform: rotate(0deg) scale(1.08);
+}
+
+/* phones: smaller gaps so all 6 fit */
+@media (max-width: 800px) {
+  .mini-sheet {
+    gap: 6px;
+    padding: 14px 12px 28px;
+  }
+  .mini {
+    width: 44px;
+    height: 56px;
+  }
+  .mini img,
+  .mini-ghost {
+    transform: scale(0.8);
   }
 }
