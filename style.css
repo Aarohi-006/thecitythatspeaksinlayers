@@ -428,8 +428,13 @@ a {
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
 }
 
+/* the map keeps its shape even before it loads, so pins never pile up */
 .map-art {
+  display: block;
   width: 100%;
+  height: auto;
+  aspect-ratio: 6 / 5;
+  object-fit: cover;
 }
 
 /* a pin = a small round sticker */
