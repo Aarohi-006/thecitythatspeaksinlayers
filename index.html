@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The City That Speaks in Layers</title>
+  <link rel="stylesheet" href="peel.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,97 +14,87 @@
 
   <main class="home">
 
-    <!-- STICKER SHEET: only stickers, the page names hide underneath -->
+    <!-- STICKER SHEET: only stickers, the page names hide underneath.
+         Drag a sticker to peel it, or tap it.
+         Peel effect: peel.js by Andrew Plummer (MIT license)
+         https://github.com/andrewplummer/peel-js -->
     <section class="sheet">
-      <!-- peel effect based on "Sticker Peel CSS Effect v2" by bsehovac:
-           https://codepen.io/bsehovac/pen/gvejKK -->
       <div id="stickers" class="sticker-grid">
-        <!-- sticker 1: new_york_apple -> STORIES -->
-        <a class="sticker-cell" href="stories.html">
-          <div class="sticker sticker-1">
+
+        <!-- sticker 1: apple -> STORIES -->
+        <a class="sticker-cell" href="stories.html" data-sticker="apple" data-corner="BOTTOM_RIGHT">
+          <div class="slot">
+            <div class="ghost"></div>
             <span class="under">STORIES</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
 
-        <!-- sticker 2: taxi -> NEIGHBORHOODS + MAP -->
-        <a class="sticker-cell" href="neighborhoods.html">
-          <div class="sticker sticker-2">
-            <span class="under">NEIGHBORHOODS + MAP</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+        <!-- sticker 2: taxi -> NEIGHBORHOODS -->
+        <a class="sticker-cell" href="neighborhoods.html" data-sticker="taxi" data-corner="BOTTOM_LEFT">
+          <div class="slot">
+            <div class="ghost"></div>
+            <span class="under">NEIGHBORHOODS</span>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
 
-        <!-- sticker 3: subway_train -> COLLECTION -->
-        <a class="sticker-cell" href="collection.html">
-          <div class="sticker sticker-3">
+        <!-- sticker 3: subway -> COLLECTION -->
+        <a class="sticker-cell" href="collection.html" data-sticker="subway" data-corner="TOP_RIGHT">
+          <div class="slot">
+            <div class="ghost"></div>
             <span class="under">COLLECTION</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
 
         <!-- sticker 4: building -> ARTIST VOICE -->
-        <a class="sticker-cell" href="artistvoices.html">
-          <div class="sticker sticker-4">
+        <a class="sticker-cell" href="artistvoices.html" data-sticker="building" data-corner="BOTTOM_RIGHT">
+          <div class="slot">
+            <div class="ghost"></div>
             <span class="under">ARTIST VOICE</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
 
         <!-- sticker 5: pizza -> PUBLIC SPEECH -->
-        <a class="sticker-cell" href="public-speech.html">
-          <div class="sticker sticker-5">
+        <a class="sticker-cell" href="public-speech.html" data-sticker="pizza" data-corner="TOP_LEFT">
+          <div class="slot">
+            <div class="ghost"></div>
             <span class="under">PUBLIC SPEECH</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
 
         <!-- sticker 6: pretzel -> ABOUT -->
-        <a class="sticker-cell" href="about.html">
-          <div class="sticker sticker-6">
+        <a class="sticker-cell" href="about.html" data-sticker="pretzel" data-corner="BOTTOM_LEFT">
+          <div class="slot">
+            <div class="ghost"></div>
             <span class="under">ABOUT</span>
-            <div class="sticker-container">
-              <div class="sticker-wrapper">
-                <div class="sticker-clip">
-                  <div class="sticker-front"></div>
-                  <div class="sticker-back"></div>
-                </div>
-              </div>
+            <div class="peel">
+              <div class="peel-top"></div>
+              <div class="peel-back"></div>
+              <div class="peel-bottom"></div>
             </div>
           </div>
         </a>
@@ -112,6 +103,8 @@
 
   </main>
 
+  <script src="peel.js"></script>
+  <script src="sticker-shapes.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
