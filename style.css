@@ -483,14 +483,21 @@ a {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* photo: grey box until you add the image */
-.hood img {
-  width: 100%;
+/* photo frame: every photo is cropped to the same shape,
+   whether it's tall or wide, so the layout never jumps */
+.hood-photo {
   aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: #E1DCCF;
+  overflow: hidden;
   border-radius: 14px;
+  background: #E1DCCF;              /* grey until the photo loads */
   margin-bottom: 14px;
+}
+
+.hood-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                /* fill the frame, crop the extra */
+  object-position: center;
 }
 
 .hood h2 {
