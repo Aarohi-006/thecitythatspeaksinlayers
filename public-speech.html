@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Speech · The City That Speaks in Layers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <div class="spine"></div>
+
+  <main class="page page-wide">
+
+    <p class="speech-intro">
+      On the street, anyone can speak. A protest, a love note, an ad, a name.
+      <strong>Your turn: make a sticker and slap it on the wall.</strong>
+    </p>
+
+    <section class="speech">
+
+      <!-- STICKER MAKER -->
+      <div class="maker">
+        <p class="small-label">1 · WRITE IT</p>
+        <input class="maker-text" type="text" maxlength="30" placeholder="I WAS HERE" aria-label="Your sticker message">
+
+        <p class="small-label">2 · SHAPE</p>
+        <div class="maker-row" data-pick="shape">
+          <button class="pick active" data-value="label">LABEL</button>
+          <button class="pick" data-value="circle">CIRCLE</button>
+          <button class="pick" data-value="bubble">BUBBLE</button>
+        </div>
+
+        <p class="small-label">3 · COLOR</p>
+        <div class="maker-row" data-pick="color">
+          <button class="swatch active" data-value="red"    aria-label="Red"></button>
+          <button class="swatch"        data-value="green"  aria-label="Green"></button>
+          <button class="swatch"        data-value="yellow" aria-label="Yellow"></button>
+          <button class="swatch"        data-value="ink"    aria-label="Black"></button>
+          <button class="swatch"        data-value="white"  aria-label="White"></button>
+        </div>
+
+        <!-- live preview -->
+        <div class="maker-preview">
+          <span class="speech-sticker label red">I WAS HERE</span>
+        </div>
+
+        <button class="slap-btn">SLAP IT ON THE WALL ✋</button>
+        <button class="clear-btn small-label">PEEL MINE OFF</button>
+      </div>
+
+      <!-- THE WALL: drag stickers to move them -->
+      <div class="wall">
+        <!-- example voices already on the wall -->
+        <span class="speech-sticker label ink"     style="left: 8%;  top: 12%; --tilt: -6deg;">HELLO MY NAME IS</span>
+        <span class="speech-sticker circle yellow" style="left: 60%; top: 8%;  --tilt: 8deg;">LOVE IS A RISK</span>
+        <span class="speech-sticker bubble white"  style="left: 34%; top: 58%; --tilt: -3deg;">REMEMBER WHO YOU WANTED TO BE</span>
+        <span class="speech-sticker label red"     style="left: 58%; top: 74%; --tilt: 5deg;">NO EXCUSES</span>
+      </div>
+
+    </section>
+
+    <p class="album-hint small-label">DRAG YOUR STICKERS TO MOVE THEM · THEY STAY ON THIS DEVICE</p>
+
+  </main>
+
+  <!-- MENU: mini sticker sheet -->
+  <nav class="mini-sheet" data-current="pizza">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
+
+  <script src="public-speech.js"></script>
+  <script src="sticker-shapes.js"></script>
+  <script src="menu.js"></script>
+</body>
+</html>
