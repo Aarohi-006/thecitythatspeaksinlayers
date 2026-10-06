@@ -12,12 +12,6 @@
 
   <main class="page">
 
-    <!-- TITLE -->
-    <header class="page-header">
-      <p class="small-label">STICKER 06 · PRETZEL</p>
-      <h1 class="red">ABOUT</h1>
-    </header>
-
     <!-- STATEMENT -->
     <section class="page-section">
       <p class="lead">
@@ -61,7 +55,11 @@
 
   <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
        click it to go back to the full sheet. -->
-  <nav class="mini-sheet" data-current="pretzel"></nav>
+  <nav class="mini-sheet" data-current="pretzel">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
 
   <script src="sticker-shapes.js"></script>
   <script src="menu.js"></script>
