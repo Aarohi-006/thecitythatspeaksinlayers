@@ -12,12 +12,6 @@
 
   <main class="page">
 
-    <!-- TITLE -->
-    <header class="page-header">
-      <p class="small-label">STICKER 04 · BUILDING</p>
-      <h1 class="red">ARTIST VOICE</h1>
-    </header>
-
     <!-- ARTIST 01 — copy this whole <article> block to add another artist -->
     <article class="artist">
 
@@ -72,7 +66,11 @@
 
   <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
        click it to go back to the full sheet. -->
-  <nav class="mini-sheet" data-current="building"></nav>
+  <nav class="mini-sheet" data-current="building">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
 
   <script src="sticker-shapes.js"></script>
   <script src="menu.js"></script>
