@@ -22,25 +22,31 @@
 
       <!-- MAP: your illustration goes in images/map.png
            each pin is placed with left (across) and top (down) in % -->
+      <div class="map-col">
       <div class="map">
         <img class="map-art" src="images/map.svg" alt="Map of Lower Manhattan and Williamsburg">
 
-        <button class="pin" data-hood="tribeca"      style="left: 25%; top: 80%;">1</button>
+        <button class="pin active" data-hood="tribeca"      style="left: 25%; top: 80%;">1</button>
         <button class="pin" data-hood="soho"         style="left: 33%; top: 66%;">2</button>
         <button class="pin" data-hood="w4th"         style="left: 28%; top: 50%;">3</button>
         <button class="pin" data-hood="stmarks"      style="left: 50%; top: 46%;">4</button>
         <button class="pin" data-hood="williamsburg" style="left: 83%; top: 52%;">5</button>
       </div>
 
+      <!-- the same 5 places as a list, so the numbers have names -->
+      <div class="hood-names">
+        <button class="hood-name active" data-hood="tribeca"><b>1</b> TRIBECA</button>
+        <button class="hood-name" data-hood="soho"><b>2</b> SOHO</button>
+        <button class="hood-name" data-hood="w4th"><b>3</b> W 4TH ST</button>
+        <button class="hood-name" data-hood="stmarks"><b>4</b> ST. MARKS</button>
+        <button class="hood-name" data-hood="williamsburg"><b>5</b> WILLIAMSBURG</button>
+      </div>
+      </div>
+
       <!-- CARDS: only one shows at a time (the one you click on the map) -->
       <div class="hood-cards">
 
-        <!-- shown before anything is clicked -->
-        <article class="hood show" id="start">
-          <p class="small-label">TAP A STICKER ON THE MAP</p>
-        </article>
-
-        <article class="hood" id="tribeca">
+        <article class="hood show" id="tribeca">
           <img src="images/tribeca.jpg" alt="Stickers on a pole in Tribeca">
           <p class="small-label">01 · LOWER MANHATTAN</p>
           <h2>TRIBECA</h2>
