@@ -1,7 +1,7 @@
 /* ===================== MINI STICKER SHEET (menu) =====================
    A small row of the 6 stickers at the bottom of every inner page.
+   The first item (a tiny sheet) always goes back to the full sheet.
    The page you're on is an empty slot (you peeled it off).
-   Click the empty slot to go back to the full sheet.
    Needs sticker-shapes.js to be loaded first.                        */
 
 const MENU = [
@@ -42,7 +42,7 @@ MENU.forEach(function (item, i) {
     }).join(', ') + ')';
     link.append(mark);
     link.setAttribute('aria-label', 'Back to the sticker sheet');
-    link.dataset.label = 'THE SHEET';
+    link.dataset.label = 'YOU ARE HERE';
   } else {
     // another page: a mini sticker
     link.href = item.page;
