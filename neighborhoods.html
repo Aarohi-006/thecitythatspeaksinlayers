@@ -12,12 +12,6 @@
 
   <main class="page page-wide">
 
-    <!-- TITLE -->
-    <header class="page-header">
-      <p class="small-label">STICKER 02 · TAXI</p>
-      <h1 class="red">NEIGHBORHOODS</h1>
-    </header>
-
     <section class="hood-layout">
 
       <!-- MAP: drawn right here in the code (no image file needed).
@@ -62,7 +56,10 @@
           <img src="images/tribeca.jpg" alt="Stickers on a pole in Tribeca">
           <p class="small-label">01 · LOWER MANHATTAN</p>
           <h2>TRIBECA</h2>
-          <p>Quieter and cleaner: fewer stickers, so each one stands out more.</p>
+          <p class="hood-lead">Quieter and cleaner: fewer stickers, so each one stands out more.</p>
+          <p class="hood-body">
+            The name comes from the "Triangle Below Canal Street." Old warehouses here became expensive lofts, and the streets are kept tidy. Stickers don't last long, so the few you find feel like small acts of rebellion: one slap on a mailbox, a tag on a pole that hasn't been scraped yet.
+          </p>
           <p class="tags"><span>rare</span><span>clean</span><span>single</span></p>
         </article>
 
@@ -70,7 +67,10 @@
           <img src="images/soho.jpg" alt="Stickers on a pole in SoHo">
           <p class="small-label">02 · LOWER MANHATTAN</p>
           <h2>SOHO</h2>
-          <p>Where street art meets shopping. Artist stickers sit next to brand ads on the same lamppost.</p>
+          <p class="hood-lead">Where street art meets shopping. Artist stickers sit next to brand ads on the same lamppost.</p>
+          <p class="hood-body">
+            "South of Houston." In the 1960s and 70s, artists moved into the empty cast-iron buildings and turned them into studios and galleries. Today the galleries are mostly stores, but the poles on Broadway, Prince and Spring Street still carry the art, layered over by logos and pop-up ads.
+          </p>
           <p class="tags"><span>artist</span><span>brand</span><span>shop</span></p>
         </article>
 
@@ -78,7 +78,10 @@
           <img src="images/w4th.jpg" alt="Stickers on a pole on W 4th Street">
           <p class="small-label">03 · WEST VILLAGE</p>
           <h2>W 4TH STREET</h2>
-          <p>Around Washington Square Park and the basketball courts, student flyers and small art stickers fill every pole.</p>
+          <p class="hood-lead">Around Washington Square Park and the basketball courts, student flyers and small art stickers fill every pole.</p>
+          <p class="hood-body">
+            This is Greenwich Village: the neighborhood of the 1960s folk scene, jazz clubs and NYU. The fenced courts at West 4th draw crowds, and the poles nearby are covered with handmade stickers, show flyers and small drawings, many of them by students.
+          </p>
           <p class="tags"><span>student</span><span>art</span><span>handmade</span></p>
         </article>
 
@@ -86,7 +89,10 @@
           <img src="images/stmarks.jpg" alt="Stickers on a pole on St. Marks Place">
           <p class="small-label">04 · EAST VILLAGE</p>
           <h2>ST. MARKS PLACE</h2>
-          <p>The loudest poles in the city: punk, band and skate stickers layered so thick the metal disappears.</p>
+          <p class="hood-lead">The loudest poles in the city: punk, band and skate stickers layered so thick the metal disappears.</p>
+          <p class="hood-body">
+            St. Marks Place was the heart of the East Village punk scene in the 1970s and 80s, full of record stores, tattoo shops and cheap food. The stickers still carry that energy. Band names, skate brands and protest slogans pile up on top of each other, and nobody scrapes them off.
+          </p>
           <p class="tags"><span>punk</span><span>band</span><span>skate</span></p>
         </article>
 
@@ -94,7 +100,10 @@
           <img src="images/williamsburg.jpg" alt="Stickers on a pole in Williamsburg">
           <p class="small-label">05 · BROOKLYN</p>
           <h2>WILLIAMSBURG</h2>
-          <p>Artists' neighborhood. Stickers, slaps and murals on almost every corner around Bedford Avenue.</p>
+          <p class="hood-lead">Artists' neighborhood. Stickers, slaps and murals on almost every corner around Bedford Avenue.</p>
+          <p class="hood-body">
+            In the 1990s and 2000s, artists moved across the river into old factories and warehouses in Williamsburg. Street art followed. Around Bedford Avenue and the waterfront, whole walls are murals, and every pole, door and pipe has stickers from artists who live just around the corner.
+          </p>
           <p class="tags"><span>artist</span><span>mural</span><span>slaps</span></p>
         </article>
 
@@ -105,7 +114,11 @@
 
   <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
        click it to go back to the full sheet. -->
-  <nav class="mini-sheet" data-current="taxi"></nav>
+  <nav class="mini-sheet" data-current="taxi">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
 
   <script src="neighborhoods.js"></script>
   <script src="sticker-shapes.js"></script>
