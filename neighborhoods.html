@@ -20,11 +20,23 @@
 
     <section class="hood-layout">
 
-      <!-- MAP: your illustration goes in images/map.png
-           each pin is placed with left (across) and top (down) in % -->
+      <!-- MAP: drawn right here in the code (no image file needed).
+           To use your own drawing instead, replace the whole <svg> ... </svg>
+           with:  <img class="map-art" src="images/map.png" alt="Map">
+           Each pin is placed with left (across) and top (down) in %. -->
       <div class="map-col">
       <div class="map">
-        <img class="map-art" src="images/map.svg" alt="Map of Lower Manhattan and Williamsburg">
+        <svg class="map-art" viewBox="0 0 600 500" role="img" aria-label="Map of Lower Manhattan and Williamsburg">
+          <rect width="600" height="500" fill="#DCE3E1"/>
+          <path d="M120 490 L95 420 L110 300 L150 120 L190 0 L330 0 L360 120 L380 250 L340 330 L250 420 L170 490 Z" fill="#FBF9F4" stroke="#1A1A1A" stroke-width="3"/>
+          <path d="M430 0 L600 0 L600 500 L260 500 L330 430 L420 330 L450 200 L420 100 Z" fill="#FBF9F4" stroke="#1A1A1A" stroke-width="3"/>
+          <g font-family="Courier New, monospace" font-size="14" font-weight="700" fill="#6B675F" letter-spacing="1">
+            <text x="190" y="60">MANHATTAN</text>
+            <text x="470" y="440">BROOKLYN</text>
+            <text x="20" y="200" transform="rotate(-80 20 200)">HUDSON RIVER</text>
+            <text x="392" y="60" transform="rotate(75 392 60)">EAST RIVER</text>
+          </g>
+        </svg>
 
         <button class="pin active" data-hood="tribeca"      style="left: 25%; top: 80%;">1</button>
         <button class="pin" data-hood="soho"         style="left: 33%; top: 66%;">2</button>
