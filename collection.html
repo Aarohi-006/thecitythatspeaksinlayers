@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection · The City That Speaks in Layers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <div class="spine"></div>
+
+  <main class="page page-wide">
+
+    <!-- FILTERS: what the stickers are stuck on -->
+    <nav class="filters">
+      <button class="filter active" data-cat="all">ALL</button>
+      <button class="filter" data-cat="walls">WALLS</button>
+      <button class="filter" data-cat="boxes">BOXES &amp; BINS</button>
+      <button class="filter" data-cat="poles">POSTS &amp; PIPES</button>
+      <button class="filter" data-cat="metal">METAL &amp; GLASS</button>
+    </nav>
+
+    <!-- THE ALBUM: each photo is stuck on like a sticker.
+         To add one: copy a <button class="item"> block, change the photo,
+         data-cat (walls / boxes / poles / metal), title, note and place. -->
+    <section class="album">
+
+      <!-- 01 -->
+      <button class="item" data-cat="walls">
+        <img src="images/collection/c01.jpg" alt="Concrete wall full of stickers, tags and small poems" loading="lazy">
+        <span class="item-title">The Cinder Block</span>
+        <span class="item-note">Every hole in this block wall becomes a frame. An ice-cream-cone monster, AA MOBB, and a column of tiny poems: <em>"Wishing I could do the same."</em></span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 02 -->
+      <button class="item" data-cat="poles">
+        <img src="images/collection/c02.jpg" alt="Bent metal post covered in peeling stickers" loading="lazy">
+        <span class="item-title">Shop Window Post</span>
+        <span class="item-note">A bent metal post outside a boutique, peeled and re-stuck so many times it is mostly white paper. REMAND HEKTIC holds the bottom.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 03 -->
+      <button class="item" data-cat="metal">
+        <img src="images/collection/c03.jpg" alt="Diamond-plate steel with large tags and stickers" loading="lazy">
+        <span class="item-title">Diamond Plate</span>
+        <span class="item-note">Three giant tags on steel. Around them: <em>SHAHLA, I WANT SOMETHING REAL</em>, a phone number asking for an interesting picture, and a blue teddy bear.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 04 -->
+      <button class="item" data-cat="walls">
+        <img src="images/collection/c04.jpg" alt="Wall collage of cartoon monster stickers and a TV-headed man" loading="lazy">
+        <span class="item-title">Moose Warning</span>
+        <span class="item-note">WARNING: MOOSE SIGHTING. A TV-headed man walks through a crowd of cartoon monsters. <em>YOUR TIME IS NOW.</em></span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 05 -->
+      <button class="item" data-cat="boxes">
+        <img src="images/collection/c05.jpg" alt="Green box covered in stickers including four crying hearts" loading="lazy">
+        <span class="item-title">Lenny Vuitton</span>
+        <span class="item-note">Four crying hearts in a row, signed Lenny Vuitton. Above them: MAXELLE TOPPED GRIMES, and a QR code that asks, <em>"Remember who you wanted to be."</em></span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 06 -->
+      <button class="item" data-cat="walls">
+        <img src="images/collection/c06.jpg" alt="Huge wall completely covered in stickers over a yellow smiley" loading="lazy">
+        <span class="item-title">The Big Wall</span>
+        <span class="item-note">Hundreds of stickers over a giant yellow smiley you can barely see anymore. Crews, cartoons, shops: not one empty inch left.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 07 -->
+      <button class="item" data-cat="poles">
+        <img src="images/collection/c07.jpg" alt="Bent metal post with stickers against a red brick wall" loading="lazy">
+        <span class="item-title">Red Brick Post</span>
+        <span class="item-note">The same kind of bent post, a different block. PERU ANA, REMAND HEKTIC again: some names follow you all over the city.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 08 -->
+      <button class="item" data-cat="poles">
+        <img src="images/collection/c08.jpg" alt="Silver duct pipe elbow covered in stickers" loading="lazy">
+        <span class="item-title">The Elbow Pipe</span>
+        <span class="item-note">A silver duct bent like an arm, wearing stickers like tattoos. A smiley face sits right on top.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 09 -->
+      <button class="item" data-cat="boxes">
+        <img src="images/collection/c09.jpg" alt="Rusted mustard-colored metal covered in black-and-white stickers" loading="lazy">
+        <span class="item-title">Stay Cookin</span>
+        <span class="item-note"><em>BIG CHEF DOG STAY COOKIN. FRIENDS FROM NEW YORK.</em> Black-and-white slaps on rusted mustard metal, like a page from a zine.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 10 -->
+      <button class="item" data-cat="boxes">
+        <img src="images/collection/c10.jpg" alt="Rusted teal bin with stickers and torn posters" loading="lazy">
+        <span class="item-title">Trust Jesus</span>
+        <span class="item-note">A rusted teal bin with two latches and a dog that says ESCAPE. REMAND sits right on top of TRUST JESUS: two strangers, one sentence.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 11 -->
+      <button class="item" data-cat="metal">
+        <img src="images/collection/c11.jpg" alt="Window full of brand and cartoon stickers" loading="lazy">
+        <span class="item-title">Behind Glass</span>
+        <span class="item-note">Brands take over: Levi's, Adidas, Puma, Pink Floyd. Here stickers are collected, not slapped, like a scrapbook facing the street.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+      <!-- 12 -->
+      <button class="item" data-cat="boxes">
+        <img src="images/collection/c12.jpg" alt="Perforated metal trash can covered in stickers" loading="lazy">
+        <span class="item-title">Hello My Name Is</span>
+        <span class="item-note">A perforated trash can. A classic <em>HELLO my name is</em> tag, an ad for a monster shop in Brooklyn, and DETOR JIBZ twice.</span>
+        <span class="item-place">NEW YORK</span>   <!-- change to the street / neighborhood -->
+      </button>
+
+    </section>
+
+    <p class="album-hint small-label">TAP A PHOTO TO LOOK CLOSER</p>
+
+  </main>
+
+  <!-- the big view that opens when you tap a photo -->
+  <div class="lightbox" hidden>
+    <button class="lb-close" aria-label="Close">×</button>
+    <button class="lb-prev" aria-label="Previous">←</button>
+    <figure class="lb-card">
+      <img class="lb-img" src="" alt="">
+      <figcaption>
+        <p class="small-label lb-place"></p>
+        <h2 class="lb-title"></h2>
+        <p class="lb-note"></p>
+      </figcaption>
+    </figure>
+    <button class="lb-next" aria-label="Next">→</button>
+  </div>
+
+  <!-- MENU: mini sticker sheet -->
+  <nav class="mini-sheet" data-current="subway">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
+
+  <script src="collection.js"></script>
+  <script src="sticker-shapes.js"></script>
+  <script src="menu.js"></script>
+</body>
+</html>
