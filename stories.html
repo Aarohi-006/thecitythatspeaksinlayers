@@ -13,12 +13,6 @@
 
   <main class="page">
 
-    <!-- TITLE -->
-    <header class="page-header">
-      <p class="small-label">STICKER 01 · APPLE</p>
-      <h1 class="red">STORIES</h1>
-    </header>
-
     <!-- THE POLE: stories stacked like stickers on a lamppost.
          The LAST story in the list is on top. Peel it to see the one under it.
          Peel effect: peel.js by Andrew Plummer (MIT license)
@@ -87,7 +81,11 @@
 
   <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
        click it to go back to the full sheet. -->
-  <nav class="mini-sheet" data-current="apple"></nav>
+  <nav class="mini-sheet" data-current="apple">
+    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+      <span class="sheet-icon"></span>
+    </a>
+  </nav>
 
   <script src="peel.js"></script>
   <script src="stories.js"></script>
