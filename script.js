@@ -1,44 +1,215 @@
-/* Based on the script from "Sticker Peel CSS Effect v2" by bsehovac
-   https://codepen.io/bsehovac/pen/gvejKK
-   Added: each sticker opens its page after it peels. */
+/* ===================== STICKER SHEET (homepage) =====================
+   Uses peel.js by Andrew Plummer (MIT license):
+   https://github.com/andrewplummer/peel-js
 
-const stickers = document.querySelector('#stickers');
-const cells = stickers.querySelectorAll('.sticker-cell');
+   - hover:   the corner lifts a little
+   - drag:    peel the sticker with your mouse or finger
+   - let go early:  it springs back down with a bounce
+   - pull far / flick fast:  it tumbles away the way you threw it,
+                             leaving a sticky ghost mark, then the page opens
+   - tap:     it peels off by itself                                       */
 
-if ('ontouchstart' in window) {
+// set to true to stay on the sheet (stickers pop back instead of opening pages)
+const DEMO_MODE = document.body.dataset.demo === 'true';
 
-  // PHONES: first tap peels the sticker, second tap opens the page
-  stickers.classList.add('touch');
+const cells = document.querySelectorAll('.sticker-cell');
 
-  for (let i = 0; i < cells.length; i++) {
-    cells[i].onclick = function (event) {
-      const sticker = this.querySelector('.sticker');
+cells.forEach(function (cell, i) {
+  const shape = STICKER_SHAPES[cell.dataset.sticker];
+  const el    = cell.querySelector('.peel');
+  const under = cell.querySelector('.under');
+  const ghost = cell.querySelector('.ghost');
 
-      if (!sticker.classList.contains('peeled')) {
-        event.preventDefault();                 // don't open the page yet
-        for (let j = 0; j < cells.length; j++) {
-          cells[j].querySelector('.sticker').classList.remove('peeled');
-        }
-        sticker.classList.add('peeled');
-      }
-      // if it is already peeled, the link opens normally
-    };
+  // 1. size the sticker and give it its drawing
+  const slot = cell.querySelector('.slot');
+  slot.style.width  = el.style.width  = shape.w + 'px';
+  slot.style.height = el.style.height = shape.h + 'px';
+  el.querySelector('.peel-top').style.backgroundImage = 'url("' + (shape.src || 'images/' + shape.file) + '")';
+
+  // the ghost mark has the same outline as the sticker
+  ghost.style.clipPath = 'polygon(' + shape.points.split(' ').map(function (p) {
+    const xy = p.split(',');
+    return xy[0] + 'px ' + xy[1] + 'px';
+  }).join(', ') + ')';
+
+  // 2. make it peelable, cut to the drawing's outline
+  const peel = new Peel(el, {
+    corner: Peel.Corners[cell.dataset.corner],
+    polygon: { points: shape.points },
+    topShadow: false,
+    bottomShadow: false,
+    backShadowAlpha: 0.15,
+    backReflection: true,          // the shine along the fold
+    backReflectionAlpha: 0.5,
+    backReflectionSize: 0.04
+  });
+
+  // the corner we peel from, a lifted corner, and a spot where it's fully off
+  const start = { x: peel.corner.x, y: peel.corner.y };
+  const lift  = {
+    x: start.x + (start.x === 0 ? 18 : -18),
+    y: start.y + (start.y === 0 ? 18 : -18)
+  };
+  const off = {
+    x: start.x === 0 ? shape.w * 2 : -shape.w,
+    y: start.y === 0 ? shape.h * 2 : -shape.h
+  };
+
+  let pos = { x: start.x, y: start.y };
+  let dragging = false;
+  let leaving  = false;
+  let anim     = null;
+  let trail    = [];   // the last few pointer positions, to measure the flick
+
+  // how far the sticker is peeled: 0 = stuck down, 1 = all the way off
+  function amountPeeled() {
+    const full = Math.hypot(off.x - start.x, off.y - start.y);
+    return Math.hypot(pos.x - start.x, pos.y - start.y) / full;
   }
 
-} else {
+  // move the peeled corner to (x, y)
+  function setPos(x, y) {
+    pos = { x: x, y: y };
+    peel.setPeelPosition(x, y);
+    under.style.opacity = Math.min(1, amountPeeled() * 4);
+  }
 
-  // COMPUTERS: hovering peels the sticker (CSS), clicking opens the page
-  stickers.classList.add('hover');
+  // easing curves
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeIn(t)  { return t * t; }
+  function springy(t) {                       // overshoots and wobbles
+    if (t === 0 || t === 1) return t;
+    return Math.pow(2, -9 * t) * Math.sin((t * 9 - 0.75) * (2 * Math.PI / 3)) + 1;
+  }
 
-  for (let i = 0; i < cells.length; i++) {
-    cells[i].onclick = function (event) {
-      event.preventDefault();
-      const link = this.href;
-      this.querySelector('.sticker').classList.add('peeled');
+  // smoothly move the corner to a point
+  function animateTo(target, ms, ease, done) {
+    cancelAnimationFrame(anim);
+    const from = { x: pos.x, y: pos.y };
+    const t0 = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - t0) / ms);
+      const e = ease(t);
+      setPos(from.x + (target.x - from.x) * e,
+             from.y + (target.y - from.y) * e);
+      if (t < 1) anim = requestAnimationFrame(step);
+      else if (done) done();
+    }
+    anim = requestAnimationFrame(step);
+  }
+
+  // let go too early: spring back down with a bounce
+  function snapBack() {
+    animateTo(start, 750, springy);
+  }
+
+  // peel it off and throw it in direction (vx, vy)
+  function tumble(vx, vy) {
+    if (leaving) return;
+    leaving = true;
+    ghost.classList.add('show');               // sticky mark left behind
+
+    // finish peeling, then the whole sticker flies off spinning
+    animateTo(off, 380, easeIn, function () {
+      const speed = Math.max(1, Math.hypot(vx, vy));
+      const dx = (vx / speed) * 420;
+      const dy = (vy / speed) * 420 + 120;     // a little gravity
+      const spin = (vx >= 0 ? 1 : -1) * (160 + speed * 60);
+      el.style.setProperty('--tx', dx + 'px');
+      el.style.setProperty('--ty', dy + 'px');
+      el.style.setProperty('--spin', spin + 'deg');
+      el.classList.add('tumbling');
+
       setTimeout(function () {
-        window.location.href = link;            // open the page after a short pause
-      }, 350);
-    };
+        if (DEMO_MODE) respawn();
+        else window.location.href = cell.href;
+      }, 550);
+    });
   }
 
-}
+  // demo: the sticker pops back onto the sheet
+  function respawn() {
+    setTimeout(function () {
+      el.classList.remove('tumbling');
+      setPos(start.x, start.y);
+      el.classList.add('pop');
+      ghost.classList.remove('show');
+      setTimeout(function () { el.classList.remove('pop'); leaving = false; }, 450);
+    }, 700);
+  }
+
+  // tap: throw it away from the corner it peels from
+  function tapOff() {
+    tumble(start.x === 0 ? 1 : -1, start.y === 0 ? 1 : -1);
+  }
+
+  // hover: lift the corner a little
+  cell.addEventListener('mouseenter', function () {
+    if (!dragging && !leaving) animateTo(lift, 250, easeOut);
+  });
+  cell.addEventListener('mouseleave', function () {
+    if (!dragging && !leaving) animateTo(start, 300, easeOut);
+  });
+
+  // drag: the corner follows the mouse / finger
+  peel.handleDrag(function (evt) {
+    if (leaving) return;
+    dragging = true;
+    cancelAnimationFrame(anim);
+    const p = evt.changedTouches ? evt.changedTouches[0] : evt;
+    const box = el.getBoundingClientRect();
+    setPos(p.clientX - box.left, p.clientY - box.top);
+
+    // remember where the pointer was, to know how fast it's moving
+    trail.push({ x: p.clientX, y: p.clientY, t: performance.now() });
+    if (trail.length > 5) trail.shift();
+  });
+
+  peel.handlePress(tapOff);
+
+  // let go after dragging
+  function release() {
+    if (!dragging) return;
+    dragging = false;
+
+    // flick speed (pixels per millisecond)
+    let vx = 0, vy = 0;
+    if (trail.length > 1) {
+      const a = trail[0], b = trail[trail.length - 1];
+      const dt = Math.max(1, b.t - a.t);
+      vx = (b.x - a.x) / dt;
+      vy = (b.y - a.y) / dt;
+    }
+    trail = [];
+    const flick = Math.hypot(vx, vy) > 0.8;
+
+    if (flick || amountPeeled() > 0.3) {
+      // thrown, or pulled far enough: off it goes
+      if (!flick) { vx = start.x === 0 ? 1 : -1; vy = start.y === 0 ? 1 : -1; }
+      tumble(vx, vy);
+    } else {
+      snapBack();
+    }
+  }
+  document.addEventListener('mouseup', release);
+  document.addEventListener('touchend', release);
+
+  // the link itself: JavaScript opens the page after the peel.
+  // (keyboard users pressing Enter still go straight to the page)
+  cell.addEventListener('click', function (evt) {
+    if (evt.detail !== 0) evt.preventDefault();
+  });
+
+  // coming back with the Back button: stick everything back down
+  window.addEventListener('pageshow', function () {
+    leaving = false;
+    dragging = false;
+    cancelAnimationFrame(anim);
+    el.classList.remove('tumbling');
+    ghost.classList.remove('show');
+    setPos(start.x, start.y);
+  });
+
+  // stickers get "slapped" onto the sheet one by one
+  cell.style.animationDelay = (i * 0.12) + 's';
+});
