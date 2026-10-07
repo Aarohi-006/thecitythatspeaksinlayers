@@ -1,4 +1,4 @@
-/* ===================== PUBLIC SPEECH: make your own sticker ===================== */
+/* ===================== DIY: make your own sticker ===================== */
 
 const wall    = document.querySelector('.wall');
 const input   = document.querySelector('.maker-text');
