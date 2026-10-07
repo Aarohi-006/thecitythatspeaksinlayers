@@ -33,8 +33,22 @@ cells.forEach(function (cell, i) {
   }).join(', ') + ')';
 
   // 2. make it peelable, cut to the drawing's outline
+  // the box corner we peel from (set in index.html)...
+  const box = { TOP_LEFT: [0, 0], TOP_RIGHT: [shape.w, 0],
+                BOTTOM_LEFT: [0, shape.h], BOTTOM_RIGHT: [shape.w, shape.h] }[cell.dataset.corner];
+
+  // ...moved to the nearest point of the drawing's outline,
+  // so the curl is on the sticker itself, not on empty space
+  const start = { x: box[0], y: box[1] };
+  let best = Infinity;
+  shape.points.split(' ').forEach(function (p) {
+    const xy = p.split(',').map(Number);
+    const d = Math.hypot(xy[0] - box[0], xy[1] - box[1]);
+    if (d < best) { best = d; start.x = xy[0]; start.y = xy[1]; }
+  });
+
   const peel = new Peel(el, {
-    corner: Peel.Corners[cell.dataset.corner],
+    corner: [start.x, start.y],
     polygon: { points: shape.points },
     topShadow: false,
     bottomShadow: false,
@@ -44,18 +58,20 @@ cells.forEach(function (cell, i) {
     backReflectionSize: 0.04
   });
 
-  // the corner we peel from, a lifted corner, and a spot where it's fully off
-  const start = { x: peel.corner.x, y: peel.corner.y };
-  const lift  = {
-    x: start.x + (start.x === 0 ? 18 : -18),
-    y: start.y + (start.y === 0 ? 18 : -18)
-  };
-  const off = {
-    x: start.x === 0 ? shape.w * 2 : -shape.w,
-    y: start.y === 0 ? shape.h * 2 : -shape.h
-  };
+  // direction from the corner toward the middle of the sticker
+  const mid  = { x: shape.w / 2, y: shape.h / 2 };
+  const dist = Math.hypot(mid.x - start.x, mid.y - start.y);
+  const dir  = { x: (mid.x - start.x) / dist, y: (mid.y - start.y) / dist };
+  function along(d) { return { x: start.x + dir.x * d, y: start.y + dir.y * d }; }
 
-  let pos = { x: start.x, y: start.y };
+  const small = Math.min(shape.w, shape.h);
+  const rest  = along(small * 0.22);   // resting: a corner already curled up, so people see it can peel
+  const lift  = along(small * 0.5);    // hover: it lifts more
+  const off   = along(dist * 4);       // all the way off
+
+  let pos = { x: rest.x, y: rest.y };
+  const fullDistance = Math.hypot(off.x - start.x, off.y - start.y);
+  const restAmount   = Math.hypot(rest.x - start.x, rest.y - start.y) / fullDistance;
   let dragging = false;
   let leaving  = false;
   let anim     = null;
@@ -71,7 +87,8 @@ cells.forEach(function (cell, i) {
   function setPos(x, y) {
     pos = { x: x, y: y };
     peel.setPeelPosition(x, y);
-    under.style.opacity = Math.min(1, amountPeeled() * 4);
+    // the page name only starts to show once you peel past the resting curl
+    under.style.opacity = Math.max(0, Math.min(1, (amountPeeled() - restAmount - 0.03) * 4));
   }
 
   // easing curves
@@ -100,7 +117,7 @@ cells.forEach(function (cell, i) {
 
   // let go too early: spring back down with a bounce
   function snapBack() {
-    animateTo(start, 750, springy);
+    animateTo(rest, 750, springy);
   }
 
   // peel it off and throw it in direction (vx, vy)
@@ -131,7 +148,7 @@ cells.forEach(function (cell, i) {
   function respawn() {
     setTimeout(function () {
       el.classList.remove('tumbling');
-      setPos(start.x, start.y);
+      setPos(rest.x, rest.y);
       el.classList.add('pop');
       ghost.classList.remove('show');
       setTimeout(function () { el.classList.remove('pop'); leaving = false; }, 450);
@@ -140,7 +157,7 @@ cells.forEach(function (cell, i) {
 
   // tap: throw it away from the corner it peels from
   function tapOff() {
-    tumble(start.x === 0 ? 1 : -1, start.y === 0 ? 1 : -1);
+    tumble(dir.x, dir.y);
   }
 
   // hover: lift the corner a little
@@ -148,7 +165,7 @@ cells.forEach(function (cell, i) {
     if (!dragging && !leaving) animateTo(lift, 250, easeOut);
   });
   cell.addEventListener('mouseleave', function () {
-    if (!dragging && !leaving) animateTo(start, 300, easeOut);
+    if (!dragging && !leaving) animateTo(rest, 300, easeOut);
   });
 
   // drag: the corner follows the mouse / finger
@@ -185,7 +202,7 @@ cells.forEach(function (cell, i) {
 
     if (flick || amountPeeled() > 0.3) {
       // thrown, or pulled far enough: off it goes
-      if (!flick) { vx = start.x === 0 ? 1 : -1; vy = start.y === 0 ? 1 : -1; }
+      if (!flick) { vx = dir.x; vy = dir.y; }
       tumble(vx, vy);
     } else {
       snapBack();
@@ -207,7 +224,7 @@ cells.forEach(function (cell, i) {
     cancelAnimationFrame(anim);
     el.classList.remove('tumbling');
     ghost.classList.remove('show');
-    setPos(start.x, start.y);
+    setPos(rest.x, rest.y);
   });
 
   // stickers get "slapped" onto the sheet one by one
