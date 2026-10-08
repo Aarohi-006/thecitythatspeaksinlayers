@@ -569,14 +569,75 @@ a {
   }
 }
 
-/* ===================== STORIES PAGE ===================== */
+/* ===================== STORIES PAGE (the book, as layers) ===================== */
 
-/* the pole: every story sits in the same spot, stacked */
+/* chapter tabs */
+.chapter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chapter-tab {
+  padding: 9px 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.chapter-tab b {
+  color: var(--red);
+  margin-right: 4px;
+}
+
+.chapter-tab:hover {
+  border-color: var(--red);
+}
+
+.chapter-tab.active {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+/* only one chapter shows at a time */
+.chapter {
+  display: none;
+}
+
+.chapter.active {
+  display: block;
+}
+
+.chapter-sub {
+  margin: 16px 0 36px;
+  font-size: 17px;
+  font-style: italic;
+  text-align: center;
+  color: var(--grey);
+}
+
+/* the stack on the left, the text on the right */
+.chapter-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 56px;
+  align-items: start;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* the pole: every sticker sits in the same spot, stacked */
 .pole {
   position: relative;
   width: 320px;
   height: 420px;
-  margin: 48px auto 0;
 }
 
 .story {
@@ -592,48 +653,46 @@ a {
   cursor: grabbing;
 }
 
-/* each layer is a little off, like stickers stuck by different people */
-.story:nth-of-type(1) { top: 10px;  left: -8px; }
-.story:nth-of-type(2) { top: -6px;  left: 10px; }
-.story:nth-of-type(3) { top: 6px;   left: 4px;  }
-.story:nth-of-type(4) { top: 0;     left: 0;    }
-
-/* a story that has been peeled off */
+/* a sticker that has been peeled off */
 .story.gone {
   display: none;
 }
 
-/* the front of each story */
+/* the front of each sticker: a poster with the big line */
 .story .peel-top {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 22px;
+  padding: 26px;
   box-sizing: border-box;
 }
 
-.story .peel-top img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  background: rgba(0, 0, 0, 0.12);   /* placeholder until the photo is added */
-  border-radius: 6px;
-  pointer-events: none;
-  -webkit-user-drag: none;
-}
-
-.story h2 {
+.story-title {
   margin: 0;
-  font-size: 26px;
-  font-weight: 900;
-  line-height: 1.1;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
 }
 
-/* the short story under the title */
-.story-body {
-  margin: -4px 0 0;
-  font-size: 15px;
-  line-height: 1.45;
+.story-punch {
+  margin: auto 0 0;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+/* big faint number in the corner */
+.story-num {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.15;
 }
 
 /* back of the sticker paper */
@@ -641,7 +700,7 @@ a {
   background-color: #F6F3EC;
 }
 
-/* a story lying flat: its back is hidden */
+/* a sticker lying flat: its back is hidden */
 .story.flat .peel-back-outer-clip {
   visibility: hidden;
 }
@@ -663,7 +722,7 @@ a {
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* the bare pole, under all the layers */
+/* the bare surface, under all the layers */
 .bare {
   position: absolute;
   inset: 0;
@@ -674,16 +733,19 @@ a {
   gap: 14px;
   padding: 30px;
   border: 2px dashed #CFC8B8;
+  border-radius: 10px;
   text-align: center;
 }
 
 .bare-text {
   margin: 0;
-  font-size: 22px;
-  line-height: 1.3;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.1;
 }
 
-.restick {
+.restick,
+.next-chapter {
   padding: 10px 18px;
   border: 1.5px solid var(--ink);
   border-radius: 999px;
@@ -691,31 +753,73 @@ a {
   cursor: pointer;
 }
 
-.restick:hover {
-  color: var(--red);
+.next-chapter {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.restick:hover,
+.next-chapter:hover {
+  color: #ffffff;
+  background: var(--red);
   border-color: var(--red);
 }
 
-.pole-hint {
-  margin: 28px 0 0;
-  text-align: center;
+/* the text of the sticker on top */
+.story-reader {
+  padding-top: 8px;
 }
 
-/* phones: a little smaller */
+.story-reader.fade-in {
+  animation: reader-in 400ms ease;
+}
+
+@keyframes reader-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reader-title {
+  margin: 8px 0 18px;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.reader-text p {
+  margin: 0 0 12px;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.pole-hint {
+  margin-top: 26px;
+}
+
+/* phones: stack on top, text underneath */
 @media (max-width: 800px) {
+  .chapter-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    justify-items: center;
+  }
   .pole,
   .story {
     width: 280px;
     height: 380px;
   }
-  .story .peel-top img {
-    height: 120px;
+  .story-punch {
+    font-size: 26px;
   }
-  .story h2 {
-    font-size: 22px;
+  .chapter-tab {
+    padding: 7px 11px;
+    font-size: 10.5px;
   }
-  .story-body {
-    font-size: 14px;
+  .reader-title {
+    font-size: 24px;
+  }
+  .reader-text p {
+    font-size: 15px;
   }
 }
 
