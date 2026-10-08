@@ -1,8 +1,8 @@
 /* ---------- COLORS (from the book cover) ---------- */
 :root {
-  --paper: #F2EEE3;   /* background */
-  --sheet: #FBF9F4;   /* sticker sheet backing */
-  --ink:   #1A1A1A;   /* black, like the spine */
+  --paper: #F2EEE3;   
+  --sheet: #FBF9F4;  
+  --ink:   #1A1A1A;   
   --green: #2F5233;
   --red:   #C8102E;
   --grey:  #6B675F;
@@ -10,11 +10,10 @@
 
 /* ---------- BASICS ---------- */
 * {
-  box-sizing: border-box;   /* padding doesn't make boxes bigger */
+  box-sizing: border-box;   
 }
 
-/* peeled stickers can stick out past the screen edge: don't let that
-   make the page scroll sideways (important on phones) */
+
 html {
   overflow-x: clip;
 }
@@ -28,7 +27,7 @@ body {
 }
 
 img {
-  max-width: 100%;          /* images never overflow their box */
+  max-width: 100%;          
   display: block;
 }
 
@@ -39,11 +38,11 @@ a {
 
 /* ---------- SPINE ---------- */
 .spine {
-  position: fixed;          /* stays put when you scroll */
+  position: fixed;        
   left: 0;
   top: 0;
   width: 18px;
-  height: 100vh;            /* full screen height */
+  height: 100vh;           
   background: var(--ink);
 }
 
@@ -79,8 +78,8 @@ a {
 
 /* ---------- LAYOUT: the sheet, centered ---------- */
 .home {
-  max-width: 760px;         /* how wide the sheet can get */
-  min-height: 100vh;        /* full screen height */
+  max-width: 760px;         
+  min-height: 100vh;       
   margin: 0 auto;           /* centers it left-right */
   padding: 40px;
   display: flex;
@@ -96,7 +95,7 @@ a {
   background: var(--sheet);
   border-radius: 22px;
   padding: 26px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);   /* soft shadow = paper */
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12); 
 }
 
 .sheet-top {
@@ -205,7 +204,7 @@ a {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--red);
-  opacity: 0;                      /* JavaScript fades it in as you peel */
+  opacity: 0;                    
   pointer-events: none;
 }
 
