@@ -1,4 +1,4 @@
-/* ---------- COLORS (from the book cover) ---------- */
+ /* ---------- COLORS (from the book cover) ---------- */
 :root {
   --paper: #F2EEE3;   /* background */
   --sheet: #FBF9F4;   /* sticker sheet backing */
@@ -607,6 +607,11 @@ a {
 
 .chapter-tab b {
   color: var(--red);
+}
+.chapter-tab[data-chapter="0"] b { color: #58212F; }
+.chapter-tab[data-chapter="1"] b { color: #123B4A; }
+.chapter-tab[data-chapter="2"] b { color: #F04B3A; }
+.chapter-tab.active b { color: #ffffff;
   margin-right: 4px;
 }
 
@@ -682,6 +687,7 @@ a {
 
 .story-title {
   margin: 0;
+  padding-right: 70px;            /* keep clear of the big number */
   font-family: "Courier New", monospace;
   font-size: 14px;
   font-weight: 700;
@@ -722,6 +728,19 @@ a {
 .story .peel-bottom {
   background-color: transparent;
 }
+
+/* chapter colors for the story layers */
+.layer-c1a { background-color: #58212F; color: #ffffff; }   /* Windsor Wine */
+.layer-c1b { background-color: #9A7610; color: #ffffff; }   /* Dried Tobacco */
+.layer-c2a { background-color: #123B4A; color: #ffffff; }   /* Poseidon */
+.layer-c2b { background-color: #C9572D; color: #ffffff; }   /* Pureed Pumpkin */
+.layer-c3a { background-color: #879F88; color: #1A1A1A; }   /* Basil (dark text reads better) */
+.layer-c3b { background-color: #F04B3A; color: #ffffff; }   /* Cherry Tomato */
+
+.layer-c1a .small-label, .layer-c1b .small-label,
+.layer-c2a .small-label, .layer-c2b .small-label,
+.layer-c3b .small-label { color: rgba(255, 255, 255, 0.8); }
+.layer-c3a .small-label { color: rgba(26, 26, 26, 0.7); }
 
 /* paper colors for the layers */
 .layer-red   { background-color: var(--red);   color: #ffffff; }
