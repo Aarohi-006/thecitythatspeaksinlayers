@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public Speech · The City That Speaks in Layers</title>
-  <link rel="stylesheet" href="style.css">
+  <title>DIY · The City That Speaks in Layers</title>
+  <link rel="stylesheet" href="peel.css">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -46,33 +47,46 @@
         </div>
 
         <button class="slap-btn">SLAP IT ON THE WALL ✋</button>
-        <button class="clear-btn small-label">PEEL MINE OFF</button>
+        <button class="download-btn">DOWNLOAD STICKER ⬇</button>
       </div>
 
-      <!-- THE WALL: drag stickers to move them -->
-      <div class="wall">
-        <!-- example voices already on the wall -->
-        <span class="speech-sticker label ink"     style="left: 8%;  top: 12%; --tilt: -6deg;">HELLO MY NAME IS</span>
-        <span class="speech-sticker circle yellow" style="left: 60%; top: 8%;  --tilt: 8deg;">LOVE IS A RISK</span>
-        <span class="speech-sticker bubble white"  style="left: 34%; top: 58%; --tilt: -3deg;">REMEMBER WHO YOU WANTED TO BE</span>
-        <span class="speech-sticker label red"     style="left: 58%; top: 74%; --tilt: 5deg;">NO EXCUSES</span>
+      <div class="wall-col">
+
+        <!-- pick which wall to stick on -->
+        <div class="wall-picker">
+          <span class="small-label">WALL:</span>
+          <!-- YOUR WALL: save your photo as images/diy-wall.jpg and it becomes the main wall -->
+          <button class="wall-pick wall-mine" data-wall="images/diy-wall.jpg" style="background-image: url('images/diy-wall.jpg')" aria-label="My wall"></button>
+          <button class="wall-pick" data-wall="images/collection/c03.jpg" style="background-image: url('images/collection/c03.jpg')" aria-label="Diamond plate"></button>
+          <button class="wall-pick" data-wall="images/collection/c06.jpg" style="background-image: url('images/collection/c06.jpg')" aria-label="The big wall"></button>
+          <button class="wall-pick" data-wall="images/collection/c05.jpg" style="background-image: url('images/collection/c05.jpg')" aria-label="Green box"></button>
+          <button class="wall-pick" data-wall="images/collection/c09.jpg" style="background-image: url('images/collection/c09.jpg')" aria-label="Mustard metal"></button>
+          <button class="wall-pick" data-wall="images/collection/c01.jpg" style="background-image: url('images/collection/c01.jpg')" aria-label="Cinder block"></button>
+          <button class="wall-pick wall-plain" data-wall="" aria-label="Blank wall"></button>
+        </div>
+
+        <!-- THE WALL: stickers are added here by diy.js -->
+        <div class="wall"></div>
+
+        <div class="wall-tools">
+          <span class="small-label">HOVER OR TAP A STICKER: × PEELS JUST THAT ONE OFF · ⬇ DOWNLOADS IT · DRAG TO MOVE</span>
+        </div>
       </div>
 
     </section>
-
-    <p class="album-hint small-label">DRAG YOUR STICKERS TO MOVE THEM · THEY STAY ON THIS DEVICE</p>
 
   </main>
 
   <!-- MENU: mini sticker sheet -->
   <nav class="mini-sheet" data-current="pizza">
-    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+    <a class="mini mini-home" href="index.html" data-label="HOME" aria-label="Back to the sticker sheet">
       <span class="sheet-icon"></span>
     </a>
   </nav>
 
-  <script src="diy.js"></script>
+  <script src="diy.js?v=8"></script>
+  <script src="peel.js"></script>
   <script src="sticker-shapes.js"></script>
-  <script src="menu.js"></script>
+  <script src="menu.js?v=8"></script>
 </body>
 </html>
