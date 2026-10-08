@@ -284,7 +284,7 @@ a {
 /* "What's on the sheet" table: sticker -> page */
 .swap-table p {
   display: grid;
-  grid-template-columns: 1fr 40px 1fr;
+  grid-template-columns: 110px 40px 1fr;
   padding: 14px 0;
   border-bottom: 1px solid var(--ink);
   font-weight: 700;
@@ -1397,4 +1397,13 @@ a {
   .wall-picker {
     gap: 6px;
   }
+}
+
+/* About page: credits line */
+.page-section .credits {
+  font-size: 14px;
+  color: var(--grey);
+}
+.credits a {
+  text-decoration: underline;
 }
