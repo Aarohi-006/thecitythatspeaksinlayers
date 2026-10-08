@@ -4,8 +4,188 @@
    - the page you're on is an empty glue mark (you peeled it off)
    - hover a sticker: its corner peels up
    - click a sticker: it peels off, then its page opens
-   Needs peel.js and sticker-shapes.js to be loaded first.
+   Needs sticker-shapes.js loaded first (and peel.js for the peel effect).
+   Its styles are built in below, so it works on any page.
    Peel effect: peel.js by Andrew Plummer (MIT license)            */
+
+/* ---------- the menu's own styles (added to the page by this file) ---------- */
+const MENU_CSS = `
+/* ===================== MINI STICKER SHEET (menu) =====================
+   Sits on the left side of the screen, in the middle (next to the spine).
+   On phones it moves to the bottom. */
+
+/* leave room on the left so the menu never covers the page */
+body:has(.mini-sheet) {
+  padding-left: 100px;
+}
+
+.mini-sheet {
+  position: fixed;
+  top: 50%;
+  left: 32px;                      /* just right of the black spine */
+  z-index: 50;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 10px;
+  background: var(--sheet);
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+}
+
+.mini {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+}
+
+/* the spot each mini sticker sits in */
+.mini-slot {
+  position: relative;
+  display: block;
+}
+
+/* glue mark under every sticker (seen when it peels) */
+.mini-ghost {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(26, 26, 26, 0.08);
+  background-image: radial-gradient(rgba(26, 26, 26, 0.16) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+/* mini sticker layers (peel.js) */
+.mini .peel {
+  position: relative;
+  z-index: 1;
+}
+
+.mini .peel-top {
+  background-color: transparent;
+  background-size: 100% 100%;
+}
+
+.mini .peel-back {
+  background-color: #EFEAE0;
+}
+
+.mini .peel-bottom {
+  background-color: transparent;
+}
+
+/* the page name, shown to the right on hover */
+.mini::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 14px);
+  transform: translateY(-50%);
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #ffffff;
+  white-space: nowrap;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.mini:hover::after,
+.mini:focus-visible::after {
+  opacity: 1;
+}
+
+/* first item: a little house sticker = back to the homepage */
+.sheet-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+IDxwYXRoIGQ9Ik0zMiA2IEw1OSAzMCBMNTMgMzAgTDUzIDQ4IEw0MyA1OCBMMTEgNTggTDExIDMwIEw1IDMwIFoiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHlsZT0iZmlsdGVyOiBkcm9wLXNoYWRvdygwIDEuNXB4IDEuNXB4IHJnYmEoMCwwLDAsLjI1KSkiLz4gPHBhdGggZD0iTTE1IDI4IEw0OSAyOCBMNDkgNDcgTDQyIDU0IEwxNSA1NCBaIiBmaWxsPSIjRjJDMjMwIi8+IDxwYXRoIGQ9Ik0zMiA4IEw1NiAyOSBMOCAyOSBaIiBmaWxsPSIjQzgxMDJFIi8+IDxwYXRoIGQ9Ik0yNyA1NCBMMjcgNDEgUTI3IDM3IDMxIDM3IEwzMyAzNyBRMzcgMzcgMzcgNDEgTDM3IDU0IFoiIGZpbGw9IiMxQTFBMUEiLz4gPHJlY3QgeD0iNDAiIHk9IjMzIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiByeD0iMSIgZmlsbD0iIzFBMUExQSIvPiA8cGF0aCBkPSJNNTMgNDggTDQzIDU4IEw0MiA0NyBaIiBmaWxsPSIjRUZFQUUwIiBzdHJva2U9IiNkOGQxYzMiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPiA8L3N2Zz4=") center / contain no-repeat;
+  transition: transform 200ms ease;
+}
+
+.mini-home {
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1.5px dashed #CFC8B8;
+  height: 64px;
+}
+
+.mini-home:hover .sheet-icon {
+  transform: rotate(-8deg) translateY(-3px) scale(1.12);
+}
+
+/* "you are here": only the glue mark */
+.mini-here .mini-ghost {
+  background-color: rgba(200, 16, 46, 0.12);
+  background-image: radial-gradient(rgba(200, 16, 46, 0.35) 1px, transparent 1.4px);
+}
+
+/* phones: the menu moves to the bottom of the screen */
+@media (max-width: 800px) {
+  body:has(.mini-sheet) {
+    padding-left: 0;
+    padding-bottom: 84px;
+  }
+  .mini-sheet {
+    top: auto;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 4px;
+    padding: 8px 12px;
+  }
+  .mini {
+    width: 42px;
+    height: 46px;
+  }
+  .mini-slot {
+    transform: scale(0.82);
+  }
+  .mini-home {
+    height: 46px;
+    padding: 0 8px 0 0;
+    margin: 0 4px 0 0;
+    border-bottom: none;
+    border-right: 1.5px dashed #CFC8B8;
+  }
+  .sheet-icon {
+    width: 34px;
+    height: 34px;
+  }
+  .mini::after {
+    display: none;
+  }
+}
+
+
+/* peel.js basics (same as peel.css), in case peel.css is missing */
+.mini .peel-layer { position: absolute; z-index: 1; width: 100%; height: 100%; top: 0; left: 0; user-select: none; transform-origin: top left; }
+.mini .peel-svg-clip-element, .peel-svg-clip-element { position: absolute; top: -10000px; left: -10000px; width: 1px; height: 1px; opacity: 0; }
+.mini .peel { opacity: 1; }
+
+/* if peel.js is missing: plain mini stickers that lift on hover */
+.mini-img { display: block; transition: transform 200ms ease; }
+.mini:hover .mini-img { transform: rotate(-6deg) translateY(-4px) scale(1.08); }
+`;
+
+(function addMenuStyles() {
+  if (document.getElementById('mini-menu-css')) return;
+  const style = document.createElement('style');
+  style.id = 'mini-menu-css';
+  style.textContent = MENU_CSS;
+  document.head.append(style);
+})();
 
 const MENU = [
   { sticker: 'apple',    page: 'stories.html',       label: 'STORIES' },
@@ -18,8 +198,26 @@ const MENU = [
 
 const MINI = 50;   // size of a mini sticker, in px
 
-const nav  = document.querySelector('.mini-sheet');
-const here = nav.dataset.current;   // which sticker this page belongs to
+// find the menu on the page, or make one if the page doesn't have it
+let nav = document.querySelector('.mini-sheet');
+if (!nav) {
+  nav = document.createElement('nav');
+  nav.className = 'mini-sheet';
+  document.body.append(nav);
+}
+
+// the "home" house at the top (added if the page doesn't have it)
+if (!nav.querySelector('.mini-home')) {
+  nav.insertAdjacentHTML('afterbegin',
+    '<a class="mini mini-home" href="index.html" data-label="HOME" aria-label="Back to the sticker sheet">' +
+    '<span class="sheet-icon"></span></a>');
+}
+nav.querySelector('.mini-home').dataset.label = 'HOME';
+
+// which sticker this page belongs to: from data-current, or from the file name
+const fileName = location.pathname.split('/').pop() || 'index.html';
+const here = nav.dataset.current ||
+  (MENU.find(function (m) { return m.page === fileName; }) || {}).sticker;
 
 // turn "x,y x,y ..." into a smaller copy of the outline
 function scalePoints(points, scale) {
@@ -66,6 +264,18 @@ MENU.forEach(function (item) {
   // another page: a mini sticker that can peel
   link.href = item.page;
   link.setAttribute('aria-label', item.label);
+
+  // no peel.js on this page: just show the picture
+  if (typeof Peel === 'undefined') {
+    const img = document.createElement('img');
+    img.className = 'mini-img';
+    img.src = 'images/' + shape.file;
+    img.alt = '';
+    img.style.width = w + 'px';
+    img.style.height = h + 'px';
+    slot.append(img);
+    return;
+  }
 
   const el = document.createElement('div');
   el.className = 'peel';
