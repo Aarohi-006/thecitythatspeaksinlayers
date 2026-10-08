@@ -13,7 +13,14 @@
   box-sizing: border-box;   /* padding doesn't make boxes bigger */
 }
 
+/* peeled stickers can stick out past the screen edge: don't let that
+   make the page scroll sideways (important on phones) */
+html {
+  overflow-x: clip;
+}
+
 body {
+  overflow-x: hidden;
   margin: 0;
   background: var(--paper);
   color: var(--ink);
@@ -712,20 +719,29 @@ a {
   }
 }
 
-/* ===================== MINI STICKER SHEET (menu) ===================== */
+/* ===================== MINI STICKER SHEET (menu) =====================
+   Sits on the right side of the screen, in the middle.
+   On phones it moves to the bottom. */
+
+/* leave room on the right so the menu never covers the page */
+body:has(.mini-sheet) {
+  padding-right: 90px;
+}
 
 .mini-sheet {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  z-index: 50;
+  transform: translateY(-50%);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 18px;
-  width: fit-content;
-  max-width: calc(100% - 48px);
-  margin: 0 auto 56px;
-  padding: 18px 26px 30px;
+  gap: 10px;
+  padding: 16px 10px;
   background: var(--sheet);
   border-radius: 18px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
 }
 
 .mini {
@@ -733,39 +749,60 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  transform: rotate(var(--tilt));
-  transition: transform 200ms ease;
+  width: 54px;
+  height: 54px;
 }
 
-.mini img {
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
-  transition: filter 200ms ease;
+/* the spot each mini sticker sits in */
+.mini-slot {
+  position: relative;
+  display: block;
 }
 
-/* hover: the sticker lifts */
-.mini:hover {
-  transform: rotate(0deg) translateY(-6px) scale(1.12);
+/* glue mark under every sticker (seen when it peels) */
+.mini-ghost {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(26, 26, 26, 0.08);
+  background-image: radial-gradient(rgba(26, 26, 26, 0.16) 1px, transparent 1.4px);
+  background-size: 5px 5px;
 }
 
-.mini:hover img {
-  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.22));
+/* mini sticker layers (peel.js) */
+.mini .peel {
+  position: relative;
+  z-index: 1;
 }
 
-/* the page name shows under the sticker on hover */
+.mini .peel-top {
+  background-color: transparent;
+  background-size: 100% 100%;
+}
+
+.mini .peel-back {
+  background-color: #EFEAE0;
+}
+
+.mini .peel-bottom {
+  background-color: transparent;
+}
+
+/* the page name, shown to the left on hover */
 .mini::after {
   content: attr(data-label);
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, 6px);
+  top: 50%;
+  right: calc(100% + 14px);
+  transform: translateY(-50%);
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #ffffff;
   white-space: nowrap;
   font-family: "Courier New", monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: var(--red);
   opacity: 0;
   transition: opacity 200ms ease;
   pointer-events: none;
@@ -776,74 +813,67 @@ a {
   opacity: 1;
 }
 
-/* clicked: it peels up and flies away */
-.mini.mini-off {
-  transform: translate(10px, -40px) rotate(25deg) scale(0.9);
-  opacity: 0;
-  transition: transform 380ms ease-in, opacity 380ms ease-in;
-}
-
-/* first item: a tiny sticker sheet = back to the homepage */
+/* first item: a little house sticker = back to the homepage */
 .sheet-icon {
   display: block;
-  width: 36px;
+  width: 44px;
   height: 44px;
-  border: 1.5px solid var(--ink);
-  border-radius: 6px;
-  background-color: #ffffff;
-  background-image: radial-gradient(var(--red) 2.4px, transparent 2.8px);
-  background-size: 12px 12px;           /* 3 x 3 little "stickers" */
-  background-position: 3px 4px;
-}
-
-/* its name is always visible, so people know how to get back */
-.mini-home::after {
-  opacity: 1;
-  color: var(--ink);
+  background: url("images/home-sticker.svg") center / contain no-repeat;
+  transition: transform 200ms ease;
 }
 
 .mini-home {
-  margin-right: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1.5px dashed #CFC8B8;
+  height: 64px;
 }
 
-/* "you are here": the empty glue mark */
-.mini-ghost {
-  display: block;
-  background-color: rgba(26, 26, 26, 0.08);
-  background-image: radial-gradient(rgba(26, 26, 26, 0.16) 1px, transparent 1.4px);
-  background-size: 5px 5px;
+.mini-home:hover .sheet-icon {
+  transform: rotate(-8deg) translateY(-3px) scale(1.12);
 }
 
-.mini-here:hover {
-  transform: rotate(0deg) scale(1.08);
+/* "you are here": only the glue mark */
+.mini-here .mini-ghost {
+  background-color: rgba(200, 16, 46, 0.12);
+  background-image: radial-gradient(rgba(200, 16, 46, 0.35) 1px, transparent 1.4px);
 }
 
-/* phones: smaller gaps so all 6 fit */
+/* phones: the menu moves to the bottom of the screen */
 @media (max-width: 800px) {
+  body:has(.mini-sheet) {
+    padding-right: 0;
+    padding-bottom: 84px;
+  }
   .mini-sheet {
-    gap: 2px;
-    max-width: calc(100% - 40px);
-    padding: 14px 12px 28px;
+    top: auto;
+    bottom: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    flex-direction: row;
+    gap: 4px;
+    padding: 8px 12px;
   }
   .mini {
-    width: 38px;
-    height: 50px;
+    width: 42px;
+    height: 46px;
   }
-  .mini img,
-  .mini-ghost {
-    transform: scale(0.68);
-  }
-  .sheet-icon {
-    width: 28px;
-    height: 34px;
-    background-size: 9px 9px;
-    background-position: 2px 3px;
+  .mini-slot {
+    transform: scale(0.82);
   }
   .mini-home {
-    margin-right: 4px;
+    height: 46px;
+    padding: 0 8px 0 0;
+    margin: 0 4px 0 0;
+    border-bottom: none;
+    border-right: 1.5px dashed #CFC8B8;
+  }
+  .sheet-icon {
+    width: 34px;
+    height: 34px;
   }
   .mini::after {
-    font-size: 9px;
+    display: none;
   }
 }
 
@@ -1071,7 +1101,7 @@ a {
   }
 }
 
-/* ===================== PUBLIC SPEECH PAGE ===================== */
+/* ===================== DIY PAGE (make your own sticker) ===================== */
 
 .speech-intro {
   max-width: 640px;
@@ -1193,16 +1223,134 @@ a {
   text-decoration: underline;
 }
 
-/* the wall: one of your photos, darkened a little */
+/* the wall: one of your photos, darkened a little (set by diy.js) */
 .wall {
   position: relative;
   min-height: 520px;
   border-radius: 18px;
   overflow: hidden;
-  background:
-    linear-gradient(rgba(26, 26, 26, 0.35), rgba(26, 26, 26, 0.35)),
-    url("images/collection/c03.jpg") center / cover;
+  background-color: #8A857B;
+  background-position: center;
+  background-size: cover;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* blank wall option: plain painted concrete */
+.wall.plain {
+  background-color: #CFC8B8;
+}
+
+/* wall picker: little photo buttons */
+.wall-picker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.wall-pick {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #ffffff;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 1.5px #CFC8B8;
+  cursor: pointer;
+}
+
+.wall-pick.active {
+  box-shadow: 0 0 0 2.5px var(--ink);
+}
+
+.wall-plain {
+  background-color: #CFC8B8;
+}
+
+.wall-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.wall-tools .small-label:first-child {
+  flex: 1;
+}
+
+.reset-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.download-btn {
+  padding: 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+/* every sticker on the wall can be moved */
+.wall .speech-sticker {
+  cursor: grab;
+  touch-action: none;
+}
+
+/* selected sticker: dashed outline + delete / download buttons */
+.wall .speech-sticker.selected {
+  outline: 2px dashed #ffffff;
+  outline-offset: 6px;
+  z-index: 5;
+}
+
+.sticker-tools {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  display: none;
+  gap: 4px;
+}
+
+.speech-sticker.selected .sticker-tools {
+  display: flex;
+}
+
+.sticker-tools button {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sticker-tools .tool-del {
+  background: var(--red);
+}
+
+/* deleted: peels up and fades */
+.speech-sticker.peeling {
+  transition: transform 300ms ease-in, opacity 300ms ease-in;
+  transform: rotate(calc(var(--tilt) + 20deg)) translateY(-30px) scale(0.8);
+  opacity: 0;
 }
 
 /* a sticker (made by you or an example) */
@@ -1236,12 +1384,6 @@ a {
 .speech-sticker.yellow { background: #F2C230;      color: var(--ink); }
 .speech-sticker.ink    { background: var(--ink);   color: #ffffff; }
 .speech-sticker.white  { background: #ffffff;      color: var(--ink); border-color: #ffffff; outline: 1.5px solid #DDD6C8; }
-
-/* your stickers can be dragged */
-.speech-sticker.mine {
-  cursor: grab;
-  touch-action: none;
-}
 
 .speech-sticker.dragging {
   cursor: grabbing;
@@ -1278,5 +1420,12 @@ a {
   .speech-sticker.circle {
     width: 100px;
     height: 100px;
+  }
+  .wall-pick {
+    width: 36px;
+    height: 36px;
+  }
+  .wall-picker {
+    gap: 6px;
   }
 }
