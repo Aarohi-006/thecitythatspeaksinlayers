@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- "home" sticker: a little house, die-cut with a white edge, one corner peeling -->
+  <!-- white die-cut edge + soft shadow -->
+  <path d="M32 6 L59 30 L53 30 L53 48 L43 58 L11 58 L11 30 L5 30 Z"
+        fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"
+        style="filter: drop-shadow(0 1.5px 1.5px rgba(0,0,0,.25))"/>
+  <!-- walls -->
+  <path d="M15 28 L49 28 L49 47 L42 54 L15 54 Z" fill="#F2C230"/>
+  <!-- roof -->
+  <path d="M32 8 L56 29 L8 29 Z" fill="#C8102E"/>
+  <!-- door -->
+  <path d="M27 54 L27 41 Q27 37 31 37 L33 37 Q37 37 37 41 L37 54 Z" fill="#1A1A1A"/>
+  <!-- window -->
+  <rect x="40" y="33" width="6" height="6" rx="1" fill="#1A1A1A"/>
+  <!-- peeled corner: the back of the sticker folding up -->
+  <path d="M53 48 L43 58 L42 47 Z" fill="#EFEAE0" stroke="#d8d1c3" stroke-width="1" stroke-linejoin="round"/>
+</svg>
