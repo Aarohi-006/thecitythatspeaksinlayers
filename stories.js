@@ -47,14 +47,14 @@ function setupChapter(chapter) {
     reader.classList.remove('fade-in');
     void reader.offsetWidth;                    // restart the fade animation
     reader.classList.add('fade-in');
+    // the chapter number and title are already on the sticker, so only the text shows here
+    reader.querySelector('.reader-label').textContent = '';
+    reader.querySelector('.reader-title').textContent = '';
     if (!top) {
-      reader.querySelector('.reader-label').textContent = 'THE BARE SURFACE';
-      reader.querySelector('.reader-title').textContent = 'Every layer was someone saying: I was here.';
-      reader.querySelector('.reader-text').innerHTML = '';
+      reader.querySelector('.reader-text').innerHTML =
+        '<p class="reader-end">Every layer was someone saying: <em>I was here.</em></p>';
       return;
     }
-    reader.querySelector('.reader-label').textContent = top.querySelector('.small-label').textContent;
-    reader.querySelector('.reader-title').textContent = top.querySelector('.story-title').textContent;
     reader.querySelector('.reader-text').innerHTML = top.querySelector('.story-text').innerHTML;
   }
 
