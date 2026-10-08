@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About · The City That Speaks in Layers</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="peel.css">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
@@ -15,9 +16,9 @@
     <!-- STATEMENT -->
     <section class="page-section">
       <p class="lead">
-        Every sticker on a New York lamppost is someone saying
-        <em>I was here.</em> This project collects those voices
-        before the next layer covers them.
+        Before this project, a pole was a pole. Then I started looking closer,
+        and the city turned out to be <em>talking</em>, in thousands of small,
+        sticky voices, one layer on top of another.
       </p>
     </section>
 
@@ -25,10 +26,42 @@
     <section class="page-section">
       <h2>THE PROJECT</h2>
       <p>
-        <em>The City That Speaks in Layers</em> started as a hand-bound book
-        about urban stickers in New York City. This website turns it into
-        something you can touch: instead of turning pages, you peel stickers.
-        Each one opens a different layer of the city.
+        <em>The City That Speaks in Layers</em> is a study of street stickers in
+        New York City: who makes them, where they end up, and what happens to
+        them once the city takes over. It began as a hand-bound book. This
+        website turns the book into something you can touch. Instead of turning
+        pages, you peel stickers, and every sticker opens a different layer.
+      </p>
+    </section>
+
+    <!-- WHY STICKERS -->
+    <section class="page-section">
+      <h2>WHY STICKERS</h2>
+      <p>
+        A sticker is the smallest way to speak in public. It costs almost
+        nothing, it takes a second to put up, and anyone can make one.
+        On a single pole you can find an artist's name, a band, a protest,
+        an ad and a love note, all pressed together. Rain fades them, people
+        peel them, new ones cover old ones. Nothing sticks forever, but
+        something always remains.
+      </p>
+    </section>
+
+    <!-- HOW I WORKED -->
+    <section class="page-section">
+      <h2>HOW IT BEGAN: CITY COLLECTION</h2>
+      <p>
+        This website grew out of <em>City Collection</em>, an earlier project
+        where I walked New York City with a camera and took 50 photographs of
+        stickers on poles, doorways, mailboxes, bins and walls. From those
+        photographs I wrote three stories, which became the three chapters of
+        the book: <em>Stick It to the City</em>, <em>No Space Is Silent</em> and
+        <em>Nothing Sticks Forever</em>. Walking became a way of collecting,
+        and looking became a way of reading.
+      </p>
+      <p>
+        The drawings on the sticker sheet are my own: small New York icons,
+        made to be peeled.
       </p>
     </section>
 
@@ -36,11 +69,11 @@
     <section class="page-section">
       <h2>WHAT'S ON THE SHEET</h2>
       <div class="swap-table">
-        <p><span>Apple</span><span class="red">→</span><span>Stories</span></p>
-        <p><span>Taxi</span><span class="red">→</span><span>Neighborhoods + Map</span></p>
-        <p><span>Subway</span><span class="red">→</span><span>Collection</span></p>
-        <p><span>Building</span><span class="red">→</span><span>Artist Voice</span></p>
-        <p><span>Pizza</span><span class="red">→</span><span>Public Speech</span></p>
+        <p><span>Apple</span><span class="red">→</span><span>Stories: the book, in three chapters</span></p>
+        <p><span>Taxi</span><span class="red">→</span><span>Neighborhoods: where I looked</span></p>
+        <p><span>Subway</span><span class="red">→</span><span>Collection: what I found</span></p>
+        <p><span>Building</span><span class="red">→</span><span>Artist Voice: who makes them</span></p>
+        <p><span>Pizza</span><span class="red">→</span><span>DIY: make your own</span></p>
         <p><span>Pretzel</span><span class="red">→</span><span>About (you are here)</span></p>
       </div>
     </section>
@@ -48,7 +81,19 @@
     <!-- WHERE -->
     <section class="page-section">
       <h2>WHERE</h2>
-      <p>St. Marks Place · W 4th Street · SoHo · Tribeca · Williamsburg</p>
+      <p>New York City: St. Marks Place · W 4th Street · SoHo · Tribeca · Williamsburg</p>
+    </section>
+
+    <!-- CREDITS -->
+    <section class="page-section">
+      <h2>MADE WITH</h2>
+      <p class="credits">
+        Photos, drawings and writing: [YOUR NAME] · Based on the project
+        <em>City Collection</em>: 50 photographs and 3 stories from the streets of
+        New York City · Peel effect:
+        <a href="https://github.com/andrewplummer/peel-js">peel.js</a> by Andrew Plummer (MIT license) ·
+        Built with HTML, CSS and JavaScript · New York City, 2026
+      </p>
     </section>
 
   </main>
@@ -56,12 +101,13 @@
   <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
        click it to go back to the full sheet. -->
   <nav class="mini-sheet" data-current="pretzel">
-    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+    <a class="mini mini-home" href="index.html" data-label="HOME" aria-label="Back to the sticker sheet">
       <span class="sheet-icon"></span>
     </a>
   </nav>
 
+  <script src="peel.js"></script>
   <script src="sticker-shapes.js"></script>
-  <script src="menu.js"></script>
+  <script src="menu.js?v=10"></script>
 </body>
 </html>
