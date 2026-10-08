@@ -109,7 +109,6 @@ body:has(.mini-sheet) {
   display: block;
   width: 44px;
   height: 44px;
-  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+IDxwYXRoIGQ9Ik0zMiA2IEw1OSAzMCBMNTMgMzAgTDUzIDQ4IEw0MyA1OCBMMTEgNTggTDExIDMwIEw1IDMwIFoiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHlsZT0iZmlsdGVyOiBkcm9wLXNoYWRvdygwIDEuNXB4IDEuNXB4IHJnYmEoMCwwLDAsLjI1KSkiLz4gPHBhdGggZD0iTTE1IDI4IEw0OSAyOCBMNDkgNDcgTDQyIDU0IEwxNSA1NCBaIiBmaWxsPSIjRjJDMjMwIi8+IDxwYXRoIGQ9Ik0zMiA4IEw1NiAyOSBMOCAyOSBaIiBmaWxsPSIjQzgxMDJFIi8+IDxwYXRoIGQ9Ik0yNyA1NCBMMjcgNDEgUTI3IDM3IDMxIDM3IEwzMyAzNyBRMzcgMzcgMzcgNDEgTDM3IDU0IFoiIGZpbGw9IiMxQTFBMUEiLz4gPHJlY3QgeD0iNDAiIHk9IjMzIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiByeD0iMSIgZmlsbD0iIzFBMUExQSIvPiA8cGF0aCBkPSJNNTMgNDggTDQzIDU4IEw0MiA0NyBaIiBmaWxsPSIjRUZFQUUwIiBzdHJva2U9IiNkOGQxYzMiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPiA8L3N2Zz4=") center / contain no-repeat;
   transition: transform 200ms ease;
 }
 
@@ -118,6 +117,11 @@ body:has(.mini-sheet) {
   margin-bottom: 4px;
   border-bottom: 1.5px dashed #CFC8B8;
   height: 64px;
+}
+
+.sheet-icon svg {
+  display: block;
+  filter: drop-shadow(0 1.5px 1.5px rgba(0, 0, 0, 0.25));
 }
 
 .mini-home:hover .sheet-icon {
@@ -196,6 +200,17 @@ const MENU = [
   { sticker: 'pretzel',  page: 'about.html',         label: 'ABOUT' }
 ];
 
+// the little house sticker (drawn in code, no image file needed)
+const HOUSE_SVG =
+  '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true">' +
+  '<path d="M32 6 L59 30 L53 30 L53 48 L43 58 L11 58 L11 30 L5 30 Z" fill="#fff" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>' +
+  '<path d="M15 28 L49 28 L49 47 L42 54 L15 54 Z" fill="#F2C230"/>' +
+  '<path d="M32 8 L56 29 L8 29 Z" fill="#C8102E"/>' +
+  '<path d="M27 54 L27 41 Q27 37 31 37 L33 37 Q37 37 37 41 L37 54 Z" fill="#1A1A1A"/>' +
+  '<rect x="40" y="33" width="6" height="6" rx="1" fill="#1A1A1A"/>' +
+  '<path d="M53 48 L43 58 L42 47 Z" fill="#EFEAE0" stroke="#d8d1c3" stroke-width="1"/>' +
+  '</svg>';
+
 const MINI = 50;   // size of a mini sticker, in px
 
 // find the menu on the page, or make one if the page doesn't have it
@@ -213,6 +228,7 @@ if (!nav.querySelector('.mini-home')) {
     '<span class="sheet-icon"></span></a>');
 }
 nav.querySelector('.mini-home').dataset.label = 'HOME';
+nav.querySelector('.sheet-icon').innerHTML = HOUSE_SVG;
 
 // which sticker this page belongs to: from data-current, or from the file name
 const fileName = location.pathname.split('/').pop() || 'index.html';
