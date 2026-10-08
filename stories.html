@@ -5,95 +5,357 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stories · The City That Speaks in Layers</title>
   <link rel="stylesheet" href="peel.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
   <div class="spine"></div>
 
-  <main class="page">
+  <main class="page page-wide">
 
-    <!-- THE POLE: stories stacked like stickers on a lamppost.
-         The LAST story in the list is on top. Peel it to see the one under it.
-         Peel effect: peel.js by Andrew Plummer (MIT license)
-         https://github.com/andrewplummer/peel-js -->
-    <section class="pole">
+    <!-- CHAPTER TABS -->
+    <nav class="chapter-tabs">
+      <button class="chapter-tab active" data-chapter="0"><b>01</b> STICK IT TO THE CITY</button>
+      <button class="chapter-tab" data-chapter="1"><b>02</b> NO SPACE IS SILENT</button>
+      <button class="chapter-tab" data-chapter="2"><b>03</b> NOTHING STICKS FOREVER</button>
+    </nav>
 
-      <!-- what's left when every layer is peeled off -->
-      <div class="bare">
-        <p class="small-label">THE BARE POLE</p>
-        <p class="bare-text">Under every layer, the same message: <em>I was here.</em></p>
-        <button class="restick small-label" type="button">STICK THEM BACK ↺</button>
-      </div>
+    <!-- ===================== CHAPTER 01 ===================== -->
+    <section class="chapter active" data-chapter="0">
+      <p class="chapter-sub">Expression, identity, and the urge to be seen</p>
 
-      <!-- LAYER 1: the oldest, at the bottom -->
-      <div class="story peel" data-corner="BOTTOM_RIGHT">
-        <div class="peel-top layer-cream">
-          <p class="small-label">LAYER 01 · CLAIMED</p>
-          <img src="images/story-1.jpg" alt="A doorway covered top to bottom with SNOE MAN stickers and tags">
-          <h2>Snoe Man was here.</h2>
-          <p class="story-body">Pink, green and yellow SNOE MAN stickers march across the top of this doorway, again and again. Repeating your name is how you claim a spot. Underneath, every inch belongs to someone.</p>
+      <div class="chapter-layout">
+
+        <!-- THE STACK: the first section is on top. Peel it to read the next. -->
+        <div class="pole">
+
+          <!-- under the last layer -->
+          <div class="bare">
+            <p class="small-label">END OF CHAPTER 01</p>
+            <p class="bare-text">STICK IT TO THE CITY</p>
+            <button class="next-chapter small-label" type="button">NEXT CHAPTER →</button>
+            <button class="restick small-label" type="button">STICK THEM BACK ↺</button>
+          </div>
+
+          <!-- 01.01 — FROM LABEL TO MESSAGE -->
+          <div class="story peel" data-corner="BOTTOM_RIGHT">
+            <div class="peel-top layer-red">
+              <p class="small-label">CHAPTER 01 · 01</p>
+              <h3 class="story-title">FROM LABEL TO MESSAGE</h3>
+              <p class="story-punch">IT BECAME SOMETHING THAT COULD IDENTIFY A PERSON, IDEA, OR PLACE.</p>
+              <span class="story-num">01</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>Stickers are closely connected to the history of adhesive labels. Early labels were used for practical purposes such as identifying goods, displaying prices, and providing information.</p>
+              <p>The history of the modern sticker is not attributed to one single invention. In 1839, Sir Rowland Hill introduced the adhesive postage stamp in Britain. In 1935, R. Stanton Avery developed commercially successful self-adhesive labels, helping establish the peel-and-stick format used today.</p>
+              <p>As printing and adhesive technologies developed, stickers became easier to produce and distribute. Their purpose expanded beyond labeling and advertising into branding, art, politics, identity, and personal expression.</p>
+              <p>The sticker became more than something that identified an object.</p>
+            </div>
+          </div>
+
+          <!-- 01.02 — DIFFERENT SURFACES, DIFFERENT STORIES -->
+          <div class="story peel" data-corner="BOTTOM_LEFT">
+            <div class="peel-top layer-ink">
+              <p class="small-label">CHAPTER 01 · 02</p>
+              <h3 class="story-title">DIFFERENT SURFACES, DIFFERENT STORIES</h3>
+              <p class="story-punch">THE CITY IS NOT THE BACKGROUND.<br>IT IS PART OF THE STICKER.</p>
+              <span class="story-num">02</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A sticker never exists on a blank canvas.</p>
+              <p>In New York, stickers appear on dustbins, poles, walls, pillars, cars, mailboxes, construction barriers, and storefronts. Each surface changes how the sticker is seen.</p>
+              <p>A sticker on a car can travel through different neighborhoods.</p>
+              <p>A sticker on a pole becomes part of a dense field of signs, notices, and other stickers.</p>
+              <p>A sticker on a dustbin becomes part of everyday infrastructure.</p>
+              <p>A sticker on a wall can become one element within a larger collection of marks.</p>
+              <p>A sticker on a pillar can accumulate with others over time.</p>
+              <p>The surface affects the sticker through its texture, shape, scale, movement, and visibility.</p>
+            </div>
+          </div>
+
+          <!-- 01.03 — SMALL FORMAT. LOUD INTENTIONS. -->
+          <div class="story peel" data-corner="TOP_RIGHT">
+            <div class="peel-top layer-green">
+              <p class="small-label">CHAPTER 01 · 03</p>
+              <h3 class="story-title">SMALL FORMAT. LOUD INTENTIONS.</h3>
+              <p class="story-punch">THE DESIGN IS SMALL.<br>THE CONTEXT IS THE CITY.</p>
+              <span class="story-num">03</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A sticker is a small format for graphic communication.</p>
+              <p>Within a limited area, it can combine typography, illustration, color, symbols, imagery, and text.</p>
+              <p>Its small scale can make the message immediate. A name can function as a signature. A symbol can identify a group. A short phrase can communicate an idea in seconds.</p>
+              <p>But the designer controls only the sticker itself.</p>
+              <p>Once it enters the street, everything around it becomes part of the visual context: other stickers, graffiti, advertisements, dirt, cracks, signs, and architecture.</p>
+            </div>
+          </div>
+
+          <!-- 01.04 — WHO GETS TO SPEAK? -->
+          <div class="story peel" data-corner="BOTTOM_RIGHT">
+            <div class="peel-top layer-cream">
+              <p class="small-label">CHAPTER 01 · 04</p>
+              <h3 class="story-title">WHO GETS TO SPEAK?</h3>
+              <p class="story-punch">WHO GETS TO BE SEEN?<br>WHO GETS TO SPEAK?</p>
+              <span class="story-num">04</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>New York&#x27;s streets already contain many forms of communication.</p>
+              <p>Official signs provide information. Businesses advertise products. Institutions post notices. Artists and individuals use posters, graffiti, stickers, and other forms of street expression.</p>
+              <p>Stickers offer a small and accessible format for placing a message into this environment.</p>
+              <p>That message can be commercial, humorous, political, personal, artistic, or anonymous.</p>
+              <p>Because stickers occupy existing public-facing surfaces, they become part of a larger question about visibility and access to public space.</p>
+            </div>
+          </div>
+
         </div>
-        <div class="peel-back"></div>
-        <div class="peel-bottom"></div>
-      </div>
 
-      <!-- LAYER 2 -->
-      <div class="story peel" data-corner="TOP_RIGHT">
-        <div class="peel-top layer-green">
-          <p class="small-label">LAYER 02 · SCAN ME</p>
-          <img src="images/story-2.jpg" alt="An orange box covered in QR codes, ads and artist stickers">
-          <h2>Stickers that sell.</h2>
-          <p class="story-body">QR codes, @handles and "Download our app." A heart that says <em>Love Is a Risk, Do It Anyway</em> sits between ads and artist slaps. Here the sticker has become a business card.</p>
-        </div>
-        <div class="peel-back"></div>
-        <div class="peel-bottom"></div>
-      </div>
+        <!-- the text of the sticker on top shows here -->
+        <article class="story-reader">
+          <p class="small-label reader-label"></p>
+          <h2 class="reader-title"></h2>
+          <div class="reader-text"></div>
+          <p class="pole-hint small-label">DRAG A CORNER OR TAP TO PEEL · <span class="count"></span></p>
+        </article>
 
-      <!-- LAYER 3 -->
-      <div class="story peel" data-corner="BOTTOM_LEFT">
-        <div class="peel-top layer-ink">
-          <p class="small-label">LAYER 03 · TORN</p>
-          <img src="images/story-3.jpg" alt="An orange newspaper box covered in torn posters, tags and stickers">
-          <h2>Everyone at once.</h2>
-          <p class="story-body">A newspaper box with no newspapers. A poster ripped into white strips, a protest sticker, guitar lessons with a phone number, tags in white marker. Art, ads and politics on the same box.</p>
-        </div>
-        <div class="peel-back"></div>
-        <div class="peel-bottom"></div>
       </div>
-
-      <!-- LAYER 4: the newest, on top -->
-      <div class="story peel" data-corner="BOTTOM_RIGHT">
-        <div class="peel-top layer-red">
-          <p class="small-label">LAYER 04 · SCRAPED</p>
-          <img src="images/story-4.jpg" alt="A scraped green wall with torn paper and one small blue car sticker">
-          <h2>One survivor.</h2>
-          <p class="story-body">Someone scraped this wall clean: shredded paper, old paint, yellow spray lines underneath. In the middle, one tiny blue car sticker holds on. The smallest voice lasted the longest.</p>
-        </div>
-        <div class="peel-back"></div>
-        <div class="peel-bottom"></div>
-      </div>
-
     </section>
 
-    <!-- hint + how many layers are left -->
-    <p class="pole-hint small-label">
-      DRAG A CORNER TO PEEL · <span class="count">4</span> LAYERS LEFT
-    </p>
+    <!-- ===================== CHAPTER 02 ===================== -->
+    <section class="chapter" data-chapter="1">
+      <p class="chapter-sub">Competing messages and the shared city surface</p>
+
+      <div class="chapter-layout">
+
+        <!-- THE STACK: the first section is on top. Peel it to read the next. -->
+        <div class="pole">
+
+          <!-- under the last layer -->
+          <div class="bare">
+            <p class="small-label">END OF CHAPTER 02</p>
+            <p class="bare-text">NO SPACE IS SILENT</p>
+            <button class="next-chapter small-label" type="button">NEXT CHAPTER →</button>
+            <button class="restick small-label" type="button">STICK THEM BACK ↺</button>
+          </div>
+
+          <!-- 02.01 — MANY VOICES, ONE SURFACE -->
+          <div class="story peel" data-corner="BOTTOM_RIGHT">
+            <div class="peel-top layer-ink">
+              <p class="small-label">CHAPTER 02 · 01</p>
+              <h3 class="story-title">MANY VOICES, ONE SURFACE</h3>
+              <p class="story-punch">ONE SURFACE CAN HOLD MANY VOICES.</p>
+              <span class="story-num">01</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A sticker rarely appears alone.</p>
+              <p>On a single pole or wall, stickers can sit beside posters, graffiti, advertisements, signs, and other stickers.</p>
+              <p>Each mark carries its own message, but together they create a larger visual field.</p>
+              <p>Some messages are official. Some are commercial. Some are personal. Some are anonymous.</p>
+              <p>They may compete for attention, sit beside one another, or overlap until their original boundaries become difficult to separate.</p>
+            </div>
+          </div>
+
+          <!-- 02.02 — WHO OWNS THE WALL? -->
+          <div class="story peel" data-corner="BOTTOM_LEFT">
+            <div class="peel-top layer-green">
+              <p class="small-label">CHAPTER 02 · 02</p>
+              <h3 class="story-title">WHO OWNS THE WALL?</h3>
+              <p class="story-punch">PUBLICLY SEEN DOES NOT MEAN PUBLICLY OWNED.</p>
+              <span class="story-num">02</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A surface can look public without being available for anyone to use.</p>
+              <p>A storefront may belong to a business. A wall may belong to a property owner. A utility pole is part of public infrastructure. A car belongs to an individual.</p>
+              <p>When someone places a sticker onto one of these surfaces, the sticker becomes visible to the public while physically occupying something that may belong to someone else.</p>
+              <p>This creates a tension between expression, visibility, and ownership.</p>
+              <p>The sticker may communicate freely, but its physical location still has a context.</p>
+            </div>
+          </div>
+
+          <!-- 02.03 — ONE MESSAGE BECOMES A CROWD -->
+          <div class="story peel" data-corner="TOP_RIGHT">
+            <div class="peel-top layer-cream">
+              <p class="small-label">CHAPTER 02 · 03</p>
+              <h3 class="story-title">ONE MESSAGE BECOMES A CROWD</h3>
+              <p class="story-punch">ONE MESSAGE BECOMES A CROWD.</p>
+              <span class="story-num">03</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>One sticker is an individual mark.</p>
+              <p>Hundreds of stickers become something else.</p>
+              <p>As stickers accumulate, their individual messages begin to interact through color, scale, typography, repetition, overlap, and placement.</p>
+              <p>A surface can become dense enough that no single sticker dominates.</p>
+              <p>The collection becomes the image.</p>
+              <p>What began as separate acts of communication becomes a shared visual environment.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- the text of the sticker on top shows here -->
+        <article class="story-reader">
+          <p class="small-label reader-label"></p>
+          <h2 class="reader-title"></h2>
+          <div class="reader-text"></div>
+          <p class="pole-hint small-label">DRAG A CORNER OR TAP TO PEEL · <span class="count"></span></p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===================== CHAPTER 03 ===================== -->
+    <section class="chapter" data-chapter="2">
+      <p class="chapter-sub">Layers, disappearance, and the memory of New York</p>
+
+      <div class="chapter-layout">
+
+        <!-- THE STACK: the first section is on top. Peel it to read the next. -->
+        <div class="pole">
+
+          <!-- under the last layer -->
+          <div class="bare">
+            <p class="small-label">END OF CHAPTER 03</p>
+            <p class="bare-text">NOTHING STICKS FOREVER</p>
+            <a class="next-chapter small-label" href="index.html">BACK TO THE SHEET →</a>
+            <button class="restick small-label" type="button">STICK THEM BACK ↺</button>
+          </div>
+
+          <!-- 03.01 — EVERY STICKER HAS AN EXPIRATION DATE -->
+          <div class="story peel" data-corner="BOTTOM_RIGHT">
+            <div class="peel-top layer-green">
+              <p class="small-label">CHAPTER 03 · 01</p>
+              <h3 class="story-title">EVERY STICKER HAS AN EXPIRATION DATE</h3>
+              <p class="story-punch">ITS TEMPORARY NATURE IS PART OF ITS LIFE.</p>
+              <span class="story-num">01</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>Stickers are temporary objects.</p>
+              <p>Rain can weaken the adhesive. Sunlight can fade colors. Repeated contact can damage the surface. People can peel stickers away, paint over them, or cover them with something new.</p>
+              <p>Because of this, the appearance of a sticker changes after it enters the city.</p>
+              <p>Its edges curl.</p>
+              <p>Its colors fade.</p>
+              <p>Its surface becomes dirty.</p>
+              <p>Its message can eventually disappear.</p>
+            </div>
+          </div>
+
+          <!-- 03.02 — THE SECOND LIFE OF A STICKER -->
+          <div class="story peel" data-corner="BOTTOM_LEFT">
+            <div class="peel-top layer-cream">
+              <p class="small-label">CHAPTER 03 · 02</p>
+              <h3 class="story-title">THE SECOND LIFE OF A STICKER</h3>
+              <p class="story-punch">THE STICKER BECOMES A TRACE OF ITS OWN HISTORY.</p>
+              <span class="story-num">02</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A sticker changes after it leaves the person who made it.</p>
+              <p>It can be torn, folded, scratched, written over, or partially covered by another sticker.</p>
+              <p>The original image may become difficult to recognize.</p>
+              <p>But traces remain.</p>
+              <p>A corner of paper.</p>
+              <p>A layer of adhesive.</p>
+              <p>A faded color.</p>
+              <p>A fragment of text.</p>
+              <p>These remnants show that something was once there.</p>
+            </div>
+          </div>
+
+          <!-- 03.03 — THE CITY REMEMBERS IN PIECES -->
+          <div class="story peel" data-corner="TOP_RIGHT">
+            <div class="peel-top layer-red">
+              <p class="small-label">CHAPTER 03 · 03</p>
+              <h3 class="story-title">THE CITY REMEMBERS IN PIECES</h3>
+              <p class="story-punch">A TORN STICKER CAN TELL US THAT ANOTHER STICKER EXISTED.</p>
+              <span class="story-num">03</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>A sticker-covered surface can contain evidence of different moments.</p>
+              <p>Something was placed.</p>
+              <p>Something was covered.</p>
+              <p>Something was removed.</p>
+              <p>Something new appeared.</p>
+              <p>The surface becomes a visual record—not a permanent archive, but a temporary one.</p>
+              <p>What remains may be incomplete, but even a fragment can reveal that another image or message existed before it.</p>
+            </div>
+          </div>
+
+          <!-- 03.04 — I STARTED LOOKING DIFFERENTLY -->
+          <div class="story peel" data-corner="BOTTOM_RIGHT">
+            <div class="peel-top layer-ink">
+              <p class="small-label">CHAPTER 03 · 04</p>
+              <h3 class="story-title">I STARTED LOOKING DIFFERENTLY</h3>
+              <p class="story-punch">I WASN&#x27;T JUST WALKING THROUGH THE CITY.<br>I WAS READING IT.</p>
+              <span class="story-num">04</span>
+            </div>
+            <div class="peel-back"></div>
+            <div class="peel-bottom"></div>
+            <!-- the longer text, shown next to the stack -->
+            <div class="story-text" hidden>
+              <p>Before this project, a pole was a pole.</p>
+              <p>A mailbox was a mailbox.</p>
+              <p>A wall was a wall.</p>
+              <p>Once I started looking for stickers, these ordinary surfaces became something else.</p>
+              <p>I began noticing typography, symbols, color, repetition, placement, scale, damage, and layers.</p>
+              <p>Walking became a form of collecting.</p>
+              <p>Looking became a form of reading.</p>
+              <p>The city started to feel less like a finished image and more like something constantly being written and rewritten.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- the text of the sticker on top shows here -->
+        <article class="story-reader">
+          <p class="small-label reader-label"></p>
+          <h2 class="reader-title"></h2>
+          <div class="reader-text"></div>
+          <p class="pole-hint small-label">DRAG A CORNER OR TAP TO PEEL · <span class="count"></span></p>
+        </article>
+
+      </div>
+    </section>
 
   </main>
 
-  <!-- MENU: mini sticker sheet. This page's sticker is an empty slot;
-       click it to go back to the full sheet. -->
+  <!-- MENU: mini sticker sheet -->
   <nav class="mini-sheet" data-current="apple">
-    <a class="mini mini-home" href="index.html" data-label="THE SHEET" aria-label="Back to the sticker sheet">
+    <a class="mini mini-home" href="index.html" data-label="HOME" aria-label="Back to the sticker sheet">
       <span class="sheet-icon"></span>
     </a>
   </nav>
 
   <script src="peel.js"></script>
-  <script src="stories.js"></script>
+  <script src="stories.js?v=6"></script>
   <script src="sticker-shapes.js"></script>
-  <script src="menu.js"></script>
+  <script src="menu.js?v=6"></script>
 </body>
 </html>
