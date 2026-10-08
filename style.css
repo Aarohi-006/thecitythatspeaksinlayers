@@ -334,11 +334,20 @@ a {
   margin-bottom: 8px;
 }
 
-.artist-text h2 {
+/* every artist name: exactly the same size, on one line */
+.artist h1,
+.artist h2,
+.artist h3,
+.artist-text h1,
+.artist-text h2,
+.artist-text h3 {
   margin: 6px 0 14px;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 900;
   line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .artist-text p {
@@ -355,6 +364,10 @@ a {
 @media (max-width: 800px) {
   .artist {
     grid-template-columns: 1fr;
+  }
+  .artist h1, .artist h2, .artist h3 {
+    font-size: 26px;
+    white-space: normal;
   }
 }
 
@@ -1275,8 +1288,14 @@ a {
   gap: 4px;
 }
 
-.speech-sticker.selected .sticker-tools {
+/* the × and ⬇ buttons show when you hover a sticker (or tap it on a phone) */
+.speech-sticker.selected .sticker-tools,
+.wall .speech-sticker:hover .sticker-tools {
   display: flex;
+}
+
+.wall-pick[hidden] {
+  display: none;
 }
 
 .sticker-tools button {
