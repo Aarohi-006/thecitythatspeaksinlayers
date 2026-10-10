@@ -1,3 +1,14 @@
+/* ===================== MINI STICKER SHEET (menu) =====================
+   A strip of the 6 stickers on the left side of every inner page.
+   - the first item (a tiny sheet) always goes back to the full sheet
+   - the page you're on is an empty glue mark (you peeled it off)
+   - hover a sticker: its corner peels up
+   - click a sticker: it peels off, then its page opens
+   Needs sticker-shapes.js loaded first (and peel.js for the peel effect).
+   Its styles are built in below, so it works on any page.
+   Peel effect: peel.js by Andrew Plummer (MIT license)            */
+
+/* ---------- the menu's own styles (added to the page by this file) ---------- */
 const MENU_CSS = `
 /* ===================== MINI STICKER SHEET (menu) =====================
    Sits on the left side of the screen, in the middle (next to the spine).
