@@ -14,8 +14,24 @@ const DEMO_MODE = document.body.dataset.demo === 'true';
 
 const cells = document.querySelectorAll('.sticker-cell');
 
+// stickers are bigger on a big screen (1 = normal size)
+const SIZE = window.innerWidth > 800 ? 1.4 : 1;
+
+// make a bigger copy of a sticker's size and outline
+function scaleShape(s) {
+  return {
+    file: s.file,
+    src: s.src,
+    w: Math.round(s.w * SIZE),
+    h: Math.round(s.h * SIZE),
+    points: s.points.split(' ').map(function (p) {
+      return p.split(',').map(function (n) { return (n * SIZE).toFixed(1); }).join(',');
+    }).join(' ')
+  };
+}
+
 cells.forEach(function (cell, i) {
-  const shape = STICKER_SHAPES[cell.dataset.sticker];
+  const shape = scaleShape(STICKER_SHAPES[cell.dataset.sticker]);
   const el    = cell.querySelector('.peel');
   const under = cell.querySelector('.under');
   const ghost = cell.querySelector('.ghost');
