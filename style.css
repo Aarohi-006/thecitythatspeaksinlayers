@@ -1,1460 +1,248 @@
-/* ---------- COLORS (from the book cover) ---------- */
-:root {
-  --paper: #F2EEE3;   /* background */
-  --sheet: #FBF9F4;   /* sticker sheet backing */
-  --ink:   #1A1A1A;   /* black, like the spine */
-  --green: #2F5233;
-  --red:   #C8102E;
-  --grey:  #6B675F;
+/* ===================== STICKER SHEET (homepage) =====================
+   Uses peel.js by Andrew Plummer (MIT license):
+   https://github.com/andrewplummer/peel-js
+
+   - hover:   the corner lifts a little
+   - drag:    peel the sticker with your mouse or finger
+   - let go early:  it springs back down with a bounce
+   - pull far / flick fast:  it tumbles away the way you threw it,
+                             leaving a sticky ghost mark, then the page opens
+   - tap:     it peels off by itself                                       */
+
+// set to true to stay on the sheet (stickers pop back instead of opening pages)
+const DEMO_MODE = document.body.dataset.demo === 'true';
+
+const cells = document.querySelectorAll('.sticker-cell');
+
+// stickers are bigger on a big screen (1 = normal size)
+const SIZE = window.innerWidth > 800 ? 1.4 : 1;
+
+// make a bigger copy of a sticker's size and outline
+function scaleShape(s) {
+  return {
+    file: s.file,
+    src: s.src,
+    w: Math.round(s.w * SIZE),
+    h: Math.round(s.h * SIZE),
+    points: s.points.split(' ').map(function (p) {
+      return p.split(',').map(function (n) { return (n * SIZE).toFixed(1); }).join(',');
+    }).join(' ')
+  };
 }
 
-/* ---------- BASICS ---------- */
-* {
-  box-sizing: border-box;   /* padding doesn't make boxes bigger */
-}
+cells.forEach(function (cell, i) {
+  const shape = scaleShape(STICKER_SHAPES[cell.dataset.sticker]);
+  const el    = cell.querySelector('.peel');
+  const under = cell.querySelector('.under');
+  const ghost = cell.querySelector('.ghost');
 
-/* peeled stickers can stick out past the screen edge: don't let that
-   make the page scroll sideways (important on phones) */
-html {
-  overflow-x: clip;
-}
+  // 1. size the sticker and give it its drawing
+  const slot = cell.querySelector('.slot');
+  slot.style.width  = el.style.width  = shape.w + 'px';
+  slot.style.height = el.style.height = shape.h + 'px';
+  el.querySelector('.peel-top').style.backgroundImage = 'url("' + (shape.src || 'images/' + shape.file) + '")';
 
-body {
-  overflow-x: hidden;
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  // the ghost mark has the same outline as the sticker
+  ghost.style.clipPath = 'polygon(' + shape.points.split(' ').map(function (p) {
+    const xy = p.split(',');
+    return xy[0] + 'px ' + xy[1] + 'px';
+  }).join(', ') + ')';
 
-img {
-  max-width: 100%;          /* images never overflow their box */
-  display: block;
-}
+  // 2. make it peelable, cut to the drawing's outline
+  // the box corner we peel from (set in index.html)...
+  const box = { TOP_LEFT: [0, 0], TOP_RIGHT: [shape.w, 0],
+                BOTTOM_LEFT: [0, shape.h], BOTTOM_RIGHT: [shape.w, shape.h] }[cell.dataset.corner];
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  // ...moved to the nearest point of the drawing's outline,
+  // so the curl is on the sticker itself, not on empty space
+  const start = { x: box[0], y: box[1] };
+  let best = Infinity;
+  shape.points.split(' ').forEach(function (p) {
+    const xy = p.split(',').map(Number);
+    const d = Math.hypot(xy[0] - box[0], xy[1] - box[1]);
+    if (d < best) { best = d; start.x = xy[0]; start.y = xy[1]; }
+  });
 
-/* ---------- SPINE ---------- */
-.spine {
-  position: fixed;          /* stays put when you scroll */
-  left: 0;
-  top: 0;
-  width: 18px;
-  height: 100vh;            /* full screen height */
-  background: var(--ink);
-}
+  const peel = new Peel(el, {
+    corner: [start.x, start.y],
+    polygon: { points: shape.points },
+    topShadow: false,
+    bottomShadow: false,
+    backShadowAlpha: 0.15,
+    backReflection: true,          // the shine along the fold
+    backReflectionAlpha: 0.5,
+    backReflectionSize: 0.04
+  });
 
-/* ---------- HEADER ---------- */
-.site-header {
-  max-width: 760px;
-  margin: 0 auto;           /* centers it */
-  padding: 40px 40px 24px;
-  display: flex;
-  flex-direction: column;   /* title on top, label underneath */
-  align-items: center;
-  gap: 12px;
-  text-align: center;
-}
+  // direction from the corner toward the middle of the sticker
+  const mid  = { x: shape.w / 2, y: shape.h / 2 };
+  const dist = Math.hypot(mid.x - start.x, mid.y - start.y);
+  const dir  = { x: (mid.x - start.x) / dist, y: (mid.y - start.y) / dist };
+  function along(d) { return { x: start.x + dir.x * d, y: start.y + dir.y * d }; }
 
-.site-header h1 {
-  margin: 0;
-  font-size: 44px;
-  font-weight: 900;
-  line-height: 0.95;
-}
+  const small = Math.min(shape.w, shape.h);
+  const rest  = along(small * 0.22);   // resting: a corner already curled up, so people see it can peel
+  const lift  = along(small * 0.5);    // hover: it lifts more
+  const off   = along(dist * 4);       // all the way off
 
-.green { color: var(--green); }
-.red   { color: var(--red); }
+  let pos = { x: rest.x, y: rest.y };
+  const fullDistance = Math.hypot(off.x - start.x, off.y - start.y);
+  const restAmount   = Math.hypot(rest.x - start.x, rest.y - start.y) / fullDistance;
+  let dragging = false;
+  let leaving  = false;
+  let anim     = null;
+  let trail    = [];   // the last few pointer positions, to measure the flick
 
-.small-label {
-  margin: 0;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--grey);
-}
-
-/* ---------- LAYOUT: stickers stuck across a real sticker wall ---------- */
-.home {
-  position: relative;       /* the stickers are placed inside this box */
-  min-height: 100vh;        /* full screen */
-  overflow: hidden;
-  /* dark layer on top of the photo so my stickers stand out */
-  background:
-    linear-gradient(rgba(20, 20, 20, 0.55), rgba(20, 20, 20, 0.55)),
-    url("images/sticker-wall.jpg") center / cover no-repeat;
-}
-
-/* the old cream sheet is gone: the wall is the sheet now */
-.sheet,
-.sticker-grid {
-  position: static;
-}
-
-/* every sticker is placed by hand on the wall */
-.sticker-cell {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  translate: -50% -50%;     /* center the sticker on its spot */
-  rotate: var(--r);         /* a little tilt, like a real slap */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* where each sticker sits: x across, y down, tilt */
-.sticker-cell[data-sticker="apple"]    { --x: 20%; --y: 30%; --r: -7deg; }
-.sticker-cell[data-sticker="taxi"]     { --x: 48%; --y: 20%; --r:  5deg; }
-.sticker-cell[data-sticker="subway"]   { --x: 78%; --y: 34%; --r: -3deg; }
-.sticker-cell[data-sticker="building"] { --x: 30%; --y: 72%; --r:  4deg; }
-.sticker-cell[data-sticker="pizza"]    { --x: 56%; --y: 60%; --r: -9deg; }
-.sticker-cell[data-sticker="pretzel"]  { --x: 82%; --y: 76%; --r:  7deg; }
-
-/* ===================== STICKERS (peel.js) =====================
-   Peel effect: peel.js by Andrew Plummer (MIT license)
-   https://github.com/andrewplummer/peel-js */
-
-.sticker-cell {
-  height: 170px;                   /* every cell the same height */
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  animation: slap 450ms cubic-bezier(.2, 1.4, .4, 1) both;
-}
-
-/* sticker drops onto the sheet with a little bounce */
-@keyframes slap {
-  0%   { opacity: 0; transform: scale(1.5) rotate(-8deg); }
-  60%  { opacity: 1; }
-  100% { opacity: 1; transform: scale(1) rotate(0); }
-}
-
-/* the spot on the sheet where a sticker sits */
-.slot {
-  position: relative;
-}
-
-.sticker-cell .peel {
-  position: relative;
-  z-index: 2;
-  cursor: grab;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));   /* lifts it off the wall */
-}
-
-/* sticky ghost mark: the glue left on the sheet, same shape as the sticker */
-.ghost {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-color: rgba(251, 249, 244, 0.88);   /* torn paper left on the wall */
-  background-image: radial-gradient(rgba(26, 26, 26, 0.12) 1px, transparent 1.4px);
-  background-size: 6px 6px;      /* little dots, like dried glue */
-}
-
-/* thrown: the sticker flies off spinning */
-.sticker-cell .peel.tumbling {
-  transform: translate(var(--tx), var(--ty)) rotate(var(--spin));
-  opacity: 0;
-  transition: transform 550ms cubic-bezier(.3, .1, .6, 1), opacity 550ms ease-in;
-}
-
-/* demo: the sticker pops back on */
-.sticker-cell .peel.pop {
-  animation: slap 450ms cubic-bezier(.2, 1.4, .4, 1) both;
-}
-
-.sticker-cell .peel:active {
-  cursor: grabbing;
-}
-
-/* front: the drawing */
-.sticker-cell .peel-top {
-  background-color: transparent;
-  background-size: 100% 100%;
-}
-
-/* back of the sticker paper */
-.sticker-cell .peel-back {
-  background-color: #EFEAE0;
-}
-
-/* what's under the sticker: see-through, so the page name shows */
-.sticker-cell .peel-bottom {
-  background-color: transparent;
-}
-
-/* the page name hidden under each sticker */
-.sticker-cell .under {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  white-space: nowrap;
-  font-family: "Courier New", monospace;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--red);
-  opacity: 0;                      /* JavaScript fades it in as you peel */
-  pointer-events: none;
-}
-
-/* ---------- PHONES ---------- */
-@media (max-width: 800px) {
-  .site-header h1 {
-    font-size: 30px;
+  // how far the sticker is peeled: 0 = stuck down, 1 = all the way off
+  function amountPeeled() {
+    const full = Math.hypot(off.x - start.x, off.y - start.y);
+    return Math.hypot(pos.x - start.x, pos.y - start.y) / full;
   }
-  /* tall screen: 2 columns, 3 rows, still a bit messy */
-  .sticker-cell[data-sticker="apple"]    { --x: 30%; --y: 20%; }
-  .sticker-cell[data-sticker="taxi"]     { --x: 72%; --y: 26%; }
-  .sticker-cell[data-sticker="subway"]   { --x: 32%; --y: 48%; }
-  .sticker-cell[data-sticker="building"] { --x: 72%; --y: 54%; }
-  .sticker-cell[data-sticker="pizza"]    { --x: 30%; --y: 78%; }
-  .sticker-cell[data-sticker="pretzel"]  { --x: 70%; --y: 82%; }
-}
 
-/* ===================== INNER PAGES (About, Stories, etc.) ===================== */
-
-/* "back to the sheet" link, bottom center */
-.back-link {
-  display: block;
-  width: fit-content;       /* only as wide as the text */
-  margin: 0 auto 48px;      /* auto = centered left-right */
-  padding: 10px 18px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;     /* pill shape */
-}
-
-.back-link:hover {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-/* centered column for the page */
-.page {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 48px 40px 80px;
-}
-
-/* page title */
-.page-header h1 {
-  margin: 8px 0 0;
-  font-size: 64px;
-  font-weight: 900;
-  line-height: 0.95;
-}
-
-/* space between sections */
-.page-section {
-  margin-top: 48px;
-}
-
-/* small section headings: THE PROJECT, WHERE... */
-.page-section h2 {
-  margin: 0 0 14px;
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-}
-
-/* normal paragraphs */
-.page-section p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.55;
-}
-
-/* the big opening sentence */
-.page-section .lead {
-  font-size: 24px;
-  line-height: 1.4;
-  font-weight: 500;
-}
-
-/* "What's on the sheet" table: sticker -> page */
-.swap-table p {
-  display: grid;
-  grid-template-columns: 110px 40px 1fr;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--ink);
-  font-weight: 700;
-}
-
-.swap-table p:first-child {
-  border-top: 2px solid var(--ink);
-}
-
-/* ---------- PHONES (inner pages) ---------- */
-@media (max-width: 800px) {
-  .page {
-    padding: 20px 20px 60px 34px;   /* extra left space for the spine */
+  // move the peeled corner to (x, y)
+  function setPos(x, y) {
+    pos = { x: x, y: y };
+    peel.setPeelPosition(x, y);
+    // the page name only starts to show once you peel past the resting curl
+    under.style.opacity = Math.max(0, Math.min(1, (amountPeeled() - restAmount - 0.03) * 4));
   }
-  .page-header h1 {
-    font-size: 9vw;                  /* shrinks with the screen so long titles fit */
+
+  // easing curves
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeIn(t)  { return t * t; }
+  function springy(t) {                       // overshoots and wobbles
+    if (t === 0 || t === 1) return t;
+    return Math.pow(2, -9 * t) * Math.sin((t * 9 - 0.75) * (2 * Math.PI / 3)) + 1;
   }
-  .page-section .lead {
-    font-size: 20px;
+
+  // smoothly move the corner to a point
+  function animateTo(target, ms, ease, done) {
+    cancelAnimationFrame(anim);
+    const from = { x: pos.x, y: pos.y };
+    const t0 = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - t0) / ms);
+      const e = ease(t);
+      setPos(from.x + (target.x - from.x) * e,
+             from.y + (target.y - from.y) * e);
+      if (t < 1) anim = requestAnimationFrame(step);
+      else if (done) done();
+    }
+    anim = requestAnimationFrame(step);
   }
-}
 
-/* ===================== ARTIST VOICE PAGE ===================== */
-
-/* one artist: picture on the left, text on the right */
-.artist {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);   /* always two equal halves */
-  gap: 32px;
-  align-items: start;
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 2px solid var(--ink);
-}
-
-/* picture space: shows a grey box until the image is added */
-.artist-photo {
-  margin: 0;
-}
-
-.artist-photo img {
-  width: 100%;
-  aspect-ratio: 4 / 5;             /* portrait-shaped box */
-  object-fit: cover;               /* photo fills the box without stretching */
-  background: #E1DCCF;             /* grey placeholder when there's no image yet */
-  border-radius: 14px;
-  margin-bottom: 8px;
-}
-
-/* every artist name: exactly the same size, on one line.
-   works for h1, h2, h3... and anything inside them (b, span, font).
-   !important wins over any other size, even one typed in the HTML. */
-.artist :is(h1, h2, h3, h4, h5, h6),
-.artist :is(h1, h2, h3, h4, h5, h6) * {
-  margin: 6px 0 14px !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 30px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  letter-spacing: 0 !important;
-  text-transform: uppercase !important;
-}
-.artist :is(h1, h2, h3, h4, h5, h6) * {
-  margin: 0 !important;               /* no extra space for the inside parts */
-}
-
-.artist-text p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.55;
-}
-
-.artist-text .small-label {
-  font-size: 12px;                 /* keep "ARTIST 01" small */
-}
-
-/* phones: picture on top, text underneath */
-@media (max-width: 800px) {
-  .artist {
-    grid-template-columns: 1fr;
+  // let go too early: spring back down with a bounce
+  function snapBack() {
+    animateTo(rest, 750, springy);
   }
-  .artist :is(h1, h2, h3, h4, h5, h6),
-  .artist :is(h1, h2, h3, h4, h5, h6) * {
-    font-size: 26px !important;
-    white-space: normal;
+
+  // peel it off and throw it in direction (vx, vy)
+  function tumble(vx, vy) {
+    if (leaving) return;
+    leaving = true;
+    ghost.classList.add('show');               // sticky mark left behind
+
+    // finish peeling, then the whole sticker flies off spinning
+    animateTo(off, 380, easeIn, function () {
+      const speed = Math.max(1, Math.hypot(vx, vy));
+      const dx = (vx / speed) * 420;
+      const dy = (vy / speed) * 420 + 120;     // a little gravity
+      const spin = (vx >= 0 ? 1 : -1) * (160 + speed * 60);
+      el.style.setProperty('--tx', dx + 'px');
+      el.style.setProperty('--ty', dy + 'px');
+      el.style.setProperty('--spin', spin + 'deg');
+      el.classList.add('tumbling');
+
+      setTimeout(function () {
+        if (DEMO_MODE) respawn();
+        else window.location.href = cell.href;
+      }, 550);
+    });
   }
-}
 
-/* ===================== NEIGHBORHOODS PAGE ===================== */
-
-/* this page is wider than the others, to fit the map */
-.page-wide {
-  max-width: 1040px;
-}
-
-/* map on the left, card on the right, same height */
-.hood-layout {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 28px;
-  align-items: stretch;
-  margin-top: 40px;
-}
-
-.map-col {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* names under the map */
-.hood-names {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);   /* 5 equal buttons in one row */
-  gap: 6px;
-}
-
-.hood-name {
-  padding: 7px 4px;
-  white-space: nowrap;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font-family: "Courier New", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.hood-name b {
-  color: var(--green);
-  margin-right: 4px;
-}
-
-.hood-name:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-.hood-name.active {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-.hood-name.active b {
-  color: #ffffff;
-}
-
-/* the card sits on a paper panel, like the sticker sheet */
-.hood-cards {
-  padding: 22px;
-  background: var(--sheet);
-  border-radius: 18px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* the map: pins are placed on top of it */
-.map {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* the map keeps its shape even before it loads, so pins never pile up */
-.map-art {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 6 / 5;
-  object-fit: cover;
-}
-
-/* a pin = a small round sticker */
-.pin {
-  position: absolute;
-  width: 42px;
-  height: 42px;
-  margin: -21px 0 0 -21px;         /* so left/top point to the pin's center */
-  border: 4px solid #ffffff;       /* white sticker edge */
-  border-radius: 50%;
-  background: var(--green);
-  color: #ffffff;
-  font-family: "Courier New", monospace;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
-  transform: rotate(-6deg);
-  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
-}
-
-/* hover: the sticker lifts up a little */
-.pin:hover {
-  transform: rotate(4deg) translateY(-4px) scale(1.1);
-  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.25);
-}
-
-/* the pin you clicked */
-.pin.active {
-  background: var(--red);
-  transform: scale(1.15);
-}
-
-/* cards: all hidden, except the one with class "show" */
-.hood {
-  display: none;
-}
-
-.hood.show {
-  display: block;
-  animation: hood-in 300ms ease;
-}
-
-@keyframes hood-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* photo frame: every photo is cropped to the same shape,
-   whether it's tall or wide, so the layout never jumps */
-.hood-photo,
-.hood figure {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  margin: 0 0 14px;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #E1DCCF;              /* grey until the photo loads */
-}
-
-/* ANY photo in a neighborhood card fills the same 4:3 frame.
-   tall or wide, the extra is cropped. !important beats
-   width="" / height="" typed on the <img> in the HTML. */
-.hood img {
-  display: block;
-  width: 100% !important;
-  height: auto !important;
-  max-width: none !important;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 14px;
-  margin-bottom: 14px;
-}
-
-/* inside a frame, the photo fills the frame exactly */
-.hood-photo img,
-.hood figure img {
-  position: absolute;
-  inset: 0;
-  height: 100% !important;
-  aspect-ratio: auto;
-  border-radius: 0;
-  margin: 0;
-}
-
-.hood h2 {
-  margin: 6px 0 10px;
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.hood p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.5;
-}
-
-.hood .small-label {
-  font-size: 12px;
-}
-
-/* the short line under the name */
-.hood .hood-lead {
-  font-weight: 700;
-}
-
-/* the longer text under it */
-.hood .hood-body {
-  margin-top: 10px;
-  font-size: 15px;
-  line-height: 1.55;
-  color: #3a3833;
-}
-
-/* little tags under the sentence */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px !important;
-}
-
-.tags span {
-  padding: 4px 10px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-}
-
-/* phones: map on top, card underneath */
-@media (max-width: 800px) {
-  .hood-layout {
-    grid-template-columns: 1fr;
+  // demo: the sticker pops back onto the sheet
+  function respawn() {
+    setTimeout(function () {
+      el.classList.remove('tumbling');
+      setPos(rest.x, rest.y);
+      el.classList.add('pop');
+      ghost.classList.remove('show');
+      setTimeout(function () { el.classList.remove('pop'); leaving = false; }, 450);
+    }, 700);
   }
-  .hood-names {
-    grid-template-columns: repeat(3, 1fr);
+
+  // tap: throw it away from the corner it peels from
+  function tapOff() {
+    tumble(dir.x, dir.y);
   }
-  .pin {
-    width: 34px;
-    height: 34px;
-    margin: -17px 0 0 -17px;
-    font-size: 13px;
+
+  // hover: lift the corner a little
+  cell.addEventListener('mouseenter', function () {
+    if (!dragging && !leaving) animateTo(lift, 250, easeOut);
+  });
+  cell.addEventListener('mouseleave', function () {
+    if (!dragging && !leaving) animateTo(rest, 300, easeOut);
+  });
+
+  // drag: the corner follows the mouse / finger
+  peel.handleDrag(function (evt) {
+    if (leaving) return;
+    dragging = true;
+    cancelAnimationFrame(anim);
+    const p = evt.changedTouches ? evt.changedTouches[0] : evt;
+    const box = el.getBoundingClientRect();
+    setPos(p.clientX - box.left, p.clientY - box.top);
+
+    // remember where the pointer was, to know how fast it's moving
+    trail.push({ x: p.clientX, y: p.clientY, t: performance.now() });
+    if (trail.length > 5) trail.shift();
+  });
+
+  peel.handlePress(tapOff);
+
+  // let go after dragging
+  function release() {
+    if (!dragging) return;
+    dragging = false;
+
+    // flick speed (pixels per millisecond)
+    let vx = 0, vy = 0;
+    if (trail.length > 1) {
+      const a = trail[0], b = trail[trail.length - 1];
+      const dt = Math.max(1, b.t - a.t);
+      vx = (b.x - a.x) / dt;
+      vy = (b.y - a.y) / dt;
+    }
+    trail = [];
+    const flick = Math.hypot(vx, vy) > 0.8;
+
+    if (flick || amountPeeled() > 0.3) {
+      // thrown, or pulled far enough: off it goes
+      if (!flick) { vx = dir.x; vy = dir.y; }
+      tumble(vx, vy);
+    } else {
+      snapBack();
+    }
   }
-}
-
-/* ===================== STORIES PAGE (the book, as layers) ===================== */
-
-/* chapter tabs */
-.chapter-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.chapter-tab {
-  padding: 9px 16px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.chapter-tab b {
-  color: var(--red);
-}
-.chapter-tab[data-chapter="0"] b { color: #58212F; }
-.chapter-tab[data-chapter="1"] b { color: #123B4A; }
-.chapter-tab[data-chapter="2"] b { color: #F04B3A; }
-.chapter-tab.active b { color: #ffffff;
-  margin-right: 4px;
-}
-
-.chapter-tab:hover {
-  border-color: var(--red);
-}
-
-.chapter-tab.active {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-/* only one chapter shows at a time */
-.chapter {
-  display: none;
-}
-
-.chapter.active {
-  display: block;
-}
-
-.chapter-sub {
-  margin: 16px 0 36px;
-  font-size: 17px;
-  font-style: italic;
-  text-align: center;
-  color: var(--grey);
-}
-
-/* the stack on the left, the text on the right */
-.chapter-layout {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 56px;
-  align-items: start;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-/* the pole: every sticker sits in the same spot, stacked */
-.pole {
-  position: relative;
-  width: 320px;
-  height: 420px;
-}
-
-.story {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 320px;
-  height: 420px;
-  cursor: grab;
-}
-
-.story:active {
-  cursor: grabbing;
-}
-
-/* a sticker that has been peeled off */
-.story.gone {
-  display: none;
-}
-
-/* the front of each sticker: a poster with the big line */
-.story .peel-top {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 26px;
-  box-sizing: border-box;
-}
-
-.story-title {
-  margin: 0;
-  padding-right: 70px;            /* keep clear of the big number */
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.3;
-}
-
-.story-punch {
-  margin: auto 0 0;
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-}
-
-/* big faint number in the corner */
-.story-num {
-  position: absolute;
-  top: 14px;
-  right: 20px;
-  font-size: 64px;
-  font-weight: 900;
-  line-height: 1;
-  opacity: 0.15;
-}
-
-/* back of the sticker paper */
-.story .peel-back {
-  background-color: #F6F3EC;
-}
-
-/* a sticker lying flat: its back is hidden */
-.story.flat .peel-back-outer-clip {
-  visibility: hidden;
-}
-
-/* see-through underneath, so the next layer shows */
-.story .peel-bottom {
-  background-color: transparent;
-}
-
-/* chapter colors for the story layers */
-.layer-c1a { background-color: #58212F; color: #ffffff; }   /* Windsor Wine */
-.layer-c1b { background-color: #9A7610; color: #ffffff; }   /* Dried Tobacco */
-.layer-c2a { background-color: #123B4A; color: #ffffff; }   /* Poseidon */
-.layer-c2b { background-color: #C9572D; color: #ffffff; }   /* Pureed Pumpkin */
-.layer-c3a { background-color: #879F88; color: #1A1A1A; }   /* Basil (dark text reads better) */
-.layer-c3b { background-color: #F04B3A; color: #ffffff; }   /* Cherry Tomato */
-
-.layer-c1a .small-label, .layer-c1b .small-label,
-.layer-c2a .small-label, .layer-c2b .small-label,
-.layer-c3b .small-label { color: rgba(255, 255, 255, 0.8); }
-.layer-c3a .small-label { color: rgba(26, 26, 26, 0.7); }
-
-/* paper colors for the layers */
-.layer-red   { background-color: var(--red);   color: #ffffff; }
-.layer-green { background-color: var(--green); color: #ffffff; }
-.layer-ink   { background-color: var(--ink);   color: #ffffff; }
-.layer-cream { background-color: #FBF9F4;      color: var(--ink); }
-
-.layer-red .small-label,
-.layer-green .small-label,
-.layer-ink .small-label {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-/* the bare surface, under all the layers */
-.bare {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 30px;
-  border: 2px dashed #CFC8B8;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.bare-text {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.1;
-}
-
-.restick,
-.next-chapter {
-  padding: 10px 18px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.next-chapter {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-.restick:hover,
-.next-chapter:hover {
-  color: #ffffff;
-  background: var(--red);
-  border-color: var(--red);
-}
-
-/* the text of the sticker on top */
-.story-reader {
-  padding-top: 8px;
-}
-
-.story-reader.fade-in {
-  animation: reader-in 400ms ease;
-}
-
-@keyframes reader-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* label and title are on the sticker, so they're hidden beside it */
-.reader-label:empty,
-.reader-title:empty {
-  display: none;
-}
-
-.reader-end {
-  font-size: 24px !important;
-  font-weight: 900;
-  line-height: 1.2 !important;
-}
-
-.reader-title {
-  margin: 8px 0 18px;
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1.05;
-}
-
-.reader-text p {
-  margin: 0 0 12px;
-  font-size: 17px;
-  line-height: 1.6;
-}
-
-.pole-hint {
-  margin-top: 26px;
-}
-
-/* phones: stack on top, text underneath */
-@media (max-width: 800px) {
-  .chapter-layout {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    justify-items: center;
-  }
-  .pole,
-  .story {
-    width: 280px;
-    height: 380px;
-  }
-  .story-punch {
-    font-size: 26px;
-  }
-  .chapter-tab {
-    padding: 7px 11px;
-    font-size: 10.5px;
-  }
-  .reader-title {
-    font-size: 24px;
-  }
-  .reader-text p {
-    font-size: 15px;
-  }
-}
-
-/* ===================== MINI STICKER SHEET (menu) =====================
-   The menu styles now live inside menu.js, so the menu always looks right
-   on every page, even if this file is an older copy. */
-
-/* ===================== COLLECTION PAGE ===================== */
-
-/* filter buttons */
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 36px;
-}
-
-.filter {
-  padding: 8px 14px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.filter:hover {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-.filter.active {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-/* the album page: cream paper, like the sticker sheet */
-.album {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 34px 28px;
-  padding: 36px;
-  background: var(--sheet);
-  border-radius: 22px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* one photo, stuck on like a sticker with a white edge */
-.item {
-  display: block;
-  padding: 8px;
-  border: none;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  opacity: 0;                                  /* hidden until it's slapped on */
-  transform: rotate(var(--tilt)) scale(1.3);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-
-.item[hidden] {
-  display: none;
-}
-
-/* slapped on when you scroll to it */
-.item.stuck {
-  opacity: 1;
-  transform: rotate(var(--tilt));
-  animation: slap-photo 450ms cubic-bezier(.2, 1.4, .4, 1);
-}
-
-@keyframes slap-photo {
-  from { opacity: 0; transform: rotate(var(--tilt)) scale(1.3); }
-  to   { opacity: 1; transform: rotate(var(--tilt)) scale(1); }
-}
-
-/* hover: it lifts off the page a little */
-.item.stuck:hover {
-  transform: rotate(0deg) translateY(-6px) scale(1.03);
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
-}
-
-.item img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.item-title {
-  display: block;
-  padding: 8px 4px 2px;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-align: left;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
-/* note and place only show in the big view */
-.item-note,
-.item-place {
-  display: none;
-}
-
-.album-hint {
-  margin-top: 26px;
-  text-align: center;
-}
-
-/* ---------- the big view ---------- */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px;
-  background: rgba(26, 26, 26, 0.88);
-}
-
-.lightbox[hidden] {
-  display: none;
-}
-
-.lb-card {
-  display: grid;
-  grid-template-columns: auto 300px;
-  gap: 24px;
-  max-width: 1000px;
-  max-height: 88vh;
-  margin: 0;
-  padding: 14px;
-  background: var(--sheet);
-  border-radius: 16px;
-  animation: slap 400ms cubic-bezier(.2, 1.4, .4, 1);
-}
-
-.lb-img {
-  max-width: 100%;
-  max-height: calc(88vh - 28px);
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.lb-card figcaption {
-  align-self: center;
-  padding-right: 10px;
-}
-
-.lb-title {
-  margin: 6px 0 12px;
-  font-size: 28px;
-  font-weight: 900;
-  line-height: 1.05;
-}
-
-.lb-note {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.55;
-}
-
-.lb-close,
-.lb-prev,
-.lb-next {
-  border: 1.5px solid #ffffff;
-  border-radius: 999px;
-  background: transparent;
-  color: #ffffff;
-  font-size: 22px;
-  width: 46px;
-  height: 46px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.lb-close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-}
-
-.lb-close:hover,
-.lb-prev:hover,
-.lb-next:hover {
-  background: #ffffff;
-  color: var(--ink);
-}
-
-/* phones */
-@media (max-width: 800px) {
-  .album {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 14px;
-    padding: 18px;
-  }
-  .lightbox {
-    flex-wrap: wrap;
-    align-content: center;
-    padding: 70px 14px 20px;
-  }
-  .lb-card {
-    grid-template-columns: 1fr;
-    max-height: none;
-    order: -1;
-    width: 100%;
-    gap: 12px;
-  }
-  .lb-img {
-    max-height: 50vh;
-    margin: 0 auto;
-  }
-  .lb-title {
-    font-size: 22px;
-  }
-  .lb-note {
-    font-size: 14px;
-  }
-}
-
-/* ===================== DIY PAGE (make your own sticker) ===================== */
-
-.speech-intro {
-  max-width: 640px;
-  margin: 0 auto 32px;
-  font-size: 20px;
-  line-height: 1.45;
-  text-align: center;
-}
-
-.speech {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 28px;
-  align-items: start;
-}
-
-/* the sticker maker panel */
-.maker {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  background: var(--sheet);
-  border-radius: 18px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
-
-.maker .small-label {
-  margin-top: 6px;
-}
-
-.maker-text {
-  padding: 10px 12px;
-  border: 1.5px solid var(--ink);
-  border-radius: 8px;
-  background: #ffffff;
-  font-family: "Courier New", monospace;
-  font-size: 15px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.maker-row {
-  display: flex;
-  gap: 8px;
-}
-
-.pick {
-  flex: 1;
-  padding: 8px 4px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font-family: "Courier New", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.pick.active {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-.swatch {
-  width: 34px;
-  height: 34px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1.5px #CFC8B8;
-  cursor: pointer;
-}
-
-.swatch.active {
-  box-shadow: 0 0 0 2.5px var(--ink);
-}
-
-.swatch[data-value="red"]    { background: var(--red); }
-.swatch[data-value="green"]  { background: var(--green); }
-.swatch[data-value="yellow"] { background: #F2C230; }
-.swatch[data-value="ink"]    { background: var(--ink); }
-.swatch[data-value="white"]  { background: #ffffff; }
-
-.maker-preview {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 130px;
-  margin-top: 8px;
-  border: 1.5px dashed #CFC8B8;
-  border-radius: 12px;
-}
-
-.maker-preview .speech-sticker {
-  position: static;
-}
-
-.slap-btn {
-  padding: 14px;
-  border: none;
-  border-radius: 999px;
-  background: var(--red);
-  color: #ffffff;
-  font-family: "Courier New", monospace;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-}
-
-.slap-btn:hover {
-  background: var(--ink);
-}
-
-.clear-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* the wall: one of your photos, darkened a little (set by diy.js) */
-.wall {
-  position: relative;
-  min-height: 520px;
-  border-radius: 18px;
-  overflow: hidden;
-  background-color: #8A857B;
-  background-position: center;
-  background-size: cover;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* blank wall option: plain painted concrete */
-.wall.plain {
-  background-color: #CFC8B8;
-}
-
-/* wall picker: little photo buttons */
-.wall-picker {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.wall-pick {
-  width: 44px;
-  height: 44px;
-  border: 3px solid #ffffff;
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 0 0 1.5px #CFC8B8;
-  cursor: pointer;
-}
-
-.wall-pick.active {
-  box-shadow: 0 0 0 2.5px var(--ink);
-}
-
-.wall-plain {
-  background-color: #CFC8B8;
-}
-
-.wall-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px;
-  margin-top: 12px;
-}
-
-.wall-tools .small-label:first-child {
-  flex: 1;
-}
-
-.reset-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.download-btn {
-  padding: 12px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font-family: "Courier New", monospace;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-}
-
-.download-btn:hover {
-  background: var(--ink);
-  color: #ffffff;
-}
-
-/* every sticker on the wall can be moved */
-.wall .speech-sticker {
-  cursor: grab;
-  touch-action: none;
-}
-
-/* selected sticker: dashed outline + delete / download buttons */
-.wall .speech-sticker.selected {
-  outline: 2px dashed #ffffff;
-  outline-offset: 6px;
-  z-index: 5;
-}
-
-.sticker-tools {
-  position: absolute;
-  top: -16px;
-  right: -16px;
-  display: none;
-  gap: 4px;
-}
-
-/* the × and ⬇ buttons show when you hover a sticker (or tap it on a phone) */
-.speech-sticker.selected .sticker-tools,
-.wall .speech-sticker:hover .sticker-tools {
-  display: flex;
-}
-
-.wall-pick[hidden] {
-  display: none;
-}
-
-.sticker-tools button {
-  width: 30px;
-  height: 30px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: var(--ink);
-  color: #ffffff;
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.sticker-tools .tool-del {
-  background: var(--red);
-}
-
-/* deleted: peels up and fades */
-.speech-sticker.peeling {
-  transition: transform 300ms ease-in, opacity 300ms ease-in;
-  transform: rotate(calc(var(--tilt) + 20deg)) translateY(-30px) scale(0.8);
-  opacity: 0;
-}
-
-/* a sticker (made by you or an example) */
-.speech-sticker {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 200px;
-  padding: 12px 16px;
-  border: 4px solid #ffffff;           /* white die-cut edge */
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.1;
-  text-align: center;
-  overflow-wrap: break-word;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transform: rotate(var(--tilt, 0deg));
-  user-select: none;
-}
-
-/* shapes */
-.speech-sticker.label  { border-radius: 8px; }
-.speech-sticker.circle { width: 120px; height: 120px; padding: 14px; border-radius: 50%; }
-.speech-sticker.bubble { border-radius: 26px 26px 26px 4px; }
-
-/* colors */
-.speech-sticker.red    { background: var(--red);   color: #ffffff; }
-.speech-sticker.green  { background: var(--green); color: #ffffff; }
-.speech-sticker.yellow { background: #F2C230;      color: var(--ink); }
-.speech-sticker.ink    { background: var(--ink);   color: #ffffff; }
-.speech-sticker.white  { background: #ffffff;      color: var(--ink); border-color: #ffffff; outline: 1.5px solid #DDD6C8; }
-
-.speech-sticker.dragging {
-  cursor: grabbing;
-  z-index: 10;
-  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.35);
-}
-
-/* slapped onto the wall with a bounce */
-.speech-sticker.slapped {
-  animation: slap-sticker 450ms cubic-bezier(.2, 1.4, .4, 1);
-}
-
-@keyframes slap-sticker {
-  from { opacity: 0; transform: rotate(var(--tilt)) scale(1.6); }
-  to   { opacity: 1; transform: rotate(var(--tilt)) scale(1); }
-}
-
-/* phones: maker on top, wall underneath */
-@media (max-width: 800px) {
-  .speech {
-    grid-template-columns: 1fr;
-  }
-  .wall {
-    min-height: 420px;
-  }
-  .speech-intro {
-    font-size: 17px;
-  }
-  .speech-sticker {
-    font-size: 13px;
-    max-width: 130px;
-    padding: 10px 12px;
-  }
-  .speech-sticker.circle {
-    width: 100px;
-    height: 100px;
-  }
-  .wall-pick {
-    width: 36px;
-    height: 36px;
-  }
-  .wall-picker {
-    gap: 6px;
-  }
-}
-
-/* About page: credits line */
-.page-section .credits {
-  font-size: 14px;
-  color: var(--grey);
-}
-.credits a {
-  text-decoration: underline;
-}
+  document.addEventListener('mouseup', release);
+  document.addEventListener('touchend', release);
+
+  // the link itself: JavaScript opens the page after the peel.
+  // (keyboard users pressing Enter still go straight to the page)
+  cell.addEventListener('click', function (evt) {
+    if (evt.detail !== 0) evt.preventDefault();
+  });
+
+  // coming back with the Back button: stick everything back down
+  window.addEventListener('pageshow', function () {
+    leaving = false;
+    dragging = false;
+    cancelAnimationFrame(anim);
+    el.classList.remove('tumbling');
+    ghost.classList.remove('show');
+    setPos(rest.x, rest.y);
+  });
+
+  // stickers get "slapped" onto the sheet one by one
+  cell.style.animationDelay = (i * 0.12) + 's';
+});
