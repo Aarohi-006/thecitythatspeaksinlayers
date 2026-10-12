@@ -1,1 +1,26 @@
+/* ---------- INTRO: the wall builds itself, layer by layer ---------- */
+.home.building { background: #F2EEE3; }          /* start: blank page of the book */
+.home .scraps { position: absolute; inset: 0; overflow: hidden; }
+.scrap {
+  position: absolute;
+  background-size: cover;
+  border: 3px solid #fff;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,.3);
+  opacity: 0;
+  animation: scrap-slap 260ms cubic-bezier(.2,1.5,.4,1) forwards;
+}
+@keyframes scrap-slap {
+  from { opacity: 0; transform: scale(1.6) rotate(var(--r)); }
+  to   { opacity: 1; transform: scale(1) rotate(var(--r)); }
+}
+/* once the wall is full, it darkens a bit so my stickers pop */
+.home .shade { position: absolute; inset: 0; background: rgba(20,20,20,0); transition: background 600ms; }
+.home.built .shade { background: rgba(20,20,20,.35); }
+.sticker-cell { z-index: 2; }
+/* my stickers wait until the wall is done */
+.home.building .sticker-cell { animation-play-state: paused; opacity: 0; }
 
+/* hook line under each sticker */
+.sticker-cell .under { text-align: center; line-height: 1.3; background: #FBF9F4; padding: 6px 10px; border-radius: 6px; }
+.sticker-cell .under em { display: block; font-family: Georgia, serif; font-weight: 400; font-size: 13px; letter-spacing: 0; color: #1A1A1A; }
