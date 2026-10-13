@@ -3,7 +3,7 @@
 (function () {
   const home = document.querySelector('.home');
   const photos = [];
-  for (let n = 1; n <= 12; n++) photos.push('images/collection/c' + String(n).padStart(2, '0') + '.jpg');
+  for (let n = 1; n <= 20; n++) photos.push('images/collection/c' + String(n).padStart(2, '0') + '.jpg');
   photos.push('images/sticker-wall.jpg');
 
   const COUNT = 150;          // how many scraps
