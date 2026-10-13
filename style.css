@@ -84,7 +84,7 @@ a {
   overflow: hidden;
   /* dark layer on top of the photo so my stickers stand out */
   background:
-    linear-gradient(rgba(20, 20, 20, 0.55), rgba(20, 20, 20, 0.55)),
+    linear-gradient(rgba(20, 20, 20, 0.3), rgba(20, 20, 20, 0.3)),
     url("images/sticker-wall.jpg") center / cover no-repeat;
 }
 
@@ -507,7 +507,7 @@ a {
 .hood figure {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;   /* tall, like a phone photo, so it fits without cutting much */
   margin: 0 0 14px;
   overflow: hidden;
   border-radius: 14px;
@@ -522,7 +522,7 @@ a {
   width: 100% !important;
   height: auto !important;
   max-width: none !important;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;   /* tall, like a phone photo, so it fits without cutting much */
   object-fit: cover;
   object-position: center;
   border-radius: 14px;
@@ -1021,8 +1021,9 @@ a {
 
 .lb-card {
   display: grid;
-  grid-template-columns: auto 300px;
-  gap: 24px;
+  grid-template-columns: auto;     /* just the photo, with its name underneath */
+  justify-items: center;
+  gap: 10px;
   max-width: 1000px;
   max-height: 88vh;
   margin: 0;
@@ -1034,19 +1035,18 @@ a {
 
 .lb-img {
   max-width: 100%;
-  max-height: calc(88vh - 28px);
+  max-height: calc(88vh - 90px);   /* leaves room for the name underneath */
   object-fit: contain;
   border-radius: 8px;
 }
 
 .lb-card figcaption {
-  align-self: center;
-  padding-right: 10px;
+  text-align: center;
 }
 
 .lb-title {
-  margin: 6px 0 12px;
-  font-size: 28px;
+  margin: 2px 0 4px;
+  font-size: 22px;
   font-weight: 900;
   line-height: 1.05;
 }
