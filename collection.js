@@ -37,8 +37,6 @@ filters.forEach(function (button) {
 const box   = document.querySelector('.lightbox');
 const img   = box.querySelector('.lb-img');
 const title = box.querySelector('.lb-title');
-const note  = box.querySelector('.lb-note');
-const place = box.querySelector('.lb-place');
 let current = 0;
 
 function visibleItems() {
@@ -51,8 +49,6 @@ function open(item) {
   img.src = item.querySelector('img').src;
   img.alt = item.querySelector('img').alt;
   title.innerHTML = item.querySelector('.item-title').innerHTML;
-  note.innerHTML  = item.querySelector('.item-note').innerHTML;
-  place.textContent = item.querySelector('.item-place').textContent;
   box.hidden = false;
   document.body.style.overflow = 'hidden';   // stop the page scrolling behind
 }
